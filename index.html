@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- This meta tag is CRUCIAL for mobile responsiveness -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Museum - For Shruti</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #0a0a0a; font-family: 'Georgia', serif; color: white; touch-action: none; }
         
-        /* LOADING SCREEN */
         #loading-screen {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -20,16 +18,13 @@
         #start-btn { padding: 12px 40px; background-color: #e0e0e0; color: #000; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
         #start-btn:hover { background-color: #fff; }
 
-        /* 3D SCENE & UI */
         #scene-container { width: 100vw; height: 100vh; display: none; }
-        #hint { position: absolute; bottom: 20px; left: 20px; color: rgba(255, 255, 255, end0.5); font-family: sans-serif; font-size: 14px; display: none; }
+        #hint { position: absolute; bottom: 20px; left: 20px; color: rgba(255, 255, 255, 0.5); font-family: sans-serif; font-size: 14px; display: none; }
         
-        /* SPEECH BUBBLE */
         #speech-bubble {
             position: absolute; background: white; color: black; padding: 10px 15px;
-            border-radius: 15px; font-family: sans-serif; font-size: 14px; font
-           -weight: bold;
-            const display: none; pointer-events: none bind; transform: translate(-50%, -100%);
+            border-radius: 15px; font-family: sans-serif; font-size: 14px; font-weight: bold;
+            display: none; pointer-events: none; transform: translate(-50%, -100%);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10; white-space: nowrap;
         }
         #speech-bubble::after {
@@ -37,7 +32,6 @@
             border-width: 8px 8px 0; border-style: solid; border-color: white transparent transparent transparent;
         }
 
-        /* MOBILE CONTROLS (DPAD) */
         #mobile-controls {
             position: absolute; bottom: 30px; right: 30px; display: none;
             grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px 50px;
@@ -51,11 +45,18 @@
         }
         .control-btn:active { background: rgba(255, 255, 255, 0.6); }
         
-        /* Grid placement for D-Pad */
         #btn-up { grid-column: 2; grid-row: 1; }
         #btn-left { grid-column: 1; grid-row: 2; }
         #btn-down { grid-column: 2; grid-row: 3; }
         #btn-right { grid-column: 3; grid-row: 2; }
+
+        /* Error Screen */
+        #error-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; color: red; display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 999; font-family: monospace;
+            padding: 20px; text-align: center;
+        }
     </style>
     
     <script type="importmap">
@@ -76,10 +77,9 @@
     </div>
 
     <div id="scene-container">
-        <div id="hint"></div>
+        <div id="hint">Use WASD or Arrow Keys to walk.</div>
         <div id="speech-bubble">OMG you made this for me 🥺</div>
         
-        <!-- MOBILE TOUCH CONTROLS -->
         <div id="mobile-controls">
             <div class="control-btn" id="btn-up">▲</div>
             <div class="control-btn" id="btn-left">◀</div>
@@ -88,44 +88,64 @@
         </div>
     </div>
 
+    <!-- Agar code fail hota hai toh yahan error aayega -->
+    <div id="error-screen">
+        <h2>Oops! Something went wrong.</h2>
+        <p id="error-msg"></p>
+    </div>
+
     <script type="module">
         import * as THREE from 'three';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-        // --- UI ELEMENTS ---
         const startBtn = document.getElementById('start-btn');
         const loadingScreen = document.getElementById('loading-screen');
         const sceneContainer = document.getElementById('scene-container');
         const hint = document.getElementById('hint');
         const speechBubble = document.getElementById('speech-bubble');
         const mobileControls = document.getElementById('mobile-controls');
+        const errorScreen = document.getElementById('error-screen');
+        const errorMsg = document.getElementById('error-msg');
 
-        // --- THREE.JS VARIABLES ---
+        // GLOBAL ERROR CATCHER (Agar code phat jaye toh yahan dikhega)
+        window.addEventListener('error', function(e) {
+            console.error(e);
+            loadingScreen.style.display = 'none';
+            errorScreen.style.display = 'flex';
+            errorMsg.innerText = e.message || "Check developer console (F12) for details.";
+        });
+
         let scene, camera, renderer, boyModel, girlModel;
         let clock = new THREE.Clock();
-        
         const keys = { w: false, a: false, s: false, d: false };
         const speed = 0.08;
-
-        // Check if the device is a mobile phone/tablet
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         startBtn.addEventListener('click', () => {
-            loadingScreen.style.opacity = '0';
+            // Change button text just in case loading takes time
+            startBtn.innerText = "Loading..."; 
+            
             setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                sceneContainer.style.display = 'block';
-                
-                // Show correct controls based on device
-                if (isMobile) {
-                    mobileControls.style.display = 'grid';
-                } else {
-                    hint.style.display = 'block';
-                    hint.innerText = "Use WASD or Arrow Keys to walk.";
-                }
-                
-                initThreeJS();
-            }, 1000);
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    sceneContainer.style.display = 'block';
+                    
+                    if (isMobile) {
+                        mobileControls.style.display = 'grid';
+                    } else {
+                        hint.style.display = 'block';
+                    }
+                    
+                    try {
+                        initThreeJS(); // Try to start 3D
+                    } catch (err) {
+                        console.error("Init Error:", err);
+                        errorScreen.style.display = 'flex';
+                        errorMsg.innerText = err.message;
+                    }
+                }, 1000);
+            }, 100);
         });
 
         function initThreeJS() {
@@ -136,25 +156,22 @@
             camera.position.set(0, 5, 10); 
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
-            // Make renderer responsive
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Crisp graphics on mobile
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
             renderer.shadowMap.enabled = true;
             sceneContainer.appendChild(renderer.domElement);
 
-            // Lights
-            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
             const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
             light1.position.set(5, 10, 5);
             light1.castShadow = true;
             scene.add(light1);
 
             buildRoom();
-            addPhotos();
+            addPhotos(); // Isme error handling add ki hai
             addBench();
-            loadCharacters();
+            loadCharacters(); // Isme error handling add ki hai
 
-            // Keyboard Controls (Laptop)
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'w' || e.key === 'ArrowUp') keys.w = true;
                 if (e.key === 's' || e.key === 'ArrowDown') keys.s = true;
@@ -169,30 +186,23 @@
                 if (e.key === 'd' || e.key === 'ArrowRight') keys.d = false;
             });
 
-            // Touch Controls (Mobile)
             setupMobileControls();
-
             window.addEventListener('resize', onWindowResize);
             animate();
         }
 
-        // --- MOBILE TOUCH LOGIC ---
         function setupMobileControls() {
-            const btnUp = document.getElementById('btn-up');
-            const btnDown = document.getElementById('btn-down');
-            const btnLeft = document.getElementById('btn-left');
-            const btnRight = document.getElementById('btn-right');
-
-            // Helper function to handle touch start/Touch = (element, keyName) => {
-                element.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; }, {passive: false});
-                element.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; }, {passive: false});
-                element.addEventListener('touchcancel', (e) => { e.preventDefault(); keys[keyName] = false; }, {passive: false});
+            const bindTouch = (id, keyName) => {
+                const el = document.getElementById(id);
+                if(!el) return;
+                el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; }, {passive: false});
+                el.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; }, {passive: false});
+                el.addEventListener('touchcancel', (e) => { e.preventDefault(); keys[keyName] = false; }, {passive: false});
             };
-
-            bindTouch(btnUp, 'w');
-            bindTouch(btnDown, 's');
-            bindTouch(btnLeft, 'a');
-            bindTouch(btnRight, 'd');
+            bindTouch('btn-up', 'w');
+            bindTouch('btn-down', 's');
+            bindTouch('btn-left', 'a');
+            bindTouch('btn-right', 'd');
         }
 
         function buildRoom() {
@@ -210,10 +220,13 @@
         }
 
         function addPhotos() {
+            // Fake image data URL in case photos are missing
+            const placeholderImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
             const textureLoader = new THREE.TextureLoader();
-            // Make sure you have photo1.jpg and photo2.jpg in the same folder!
-            const photo1 = textureLoader.load('photo1.jpg'); 
-            const photo2 = textureLoader.load('photo2.jpg');
+            
+            // Try to load photos, if missing, use a grey box instead of crashing
+            const photo1 = textureLoader.load('photo1.jpg', undefined, undefined, () => { console.log("photo1.jpg not found"); });
+            const photo2 = textureLoader.load('photo2.jpg', undefined, undefined, () => { console.log("photo2.jpg not found"); });
             
             createFrame(-3, 4, -9.9, photo1);
             createFrame(3, 4, -9.9, photo2);
@@ -221,16 +234,10 @@
 
         function createFrame(x, y, z, texture) {
             const frameGroup = new THREE.Group();
-            
-            const border = new THREE.Mesh(
-                new THREE.BoxGeometry(2.5, 3, 0.1),
-                new THREE.MeshStandardMaterial({ color: 0x111111 })
-            );
-            
+            const border = new THREE.Mesh(new THREE.BoxGeometry(2.5, 3, 0.1), new THREE.MeshStandardMaterial({ color: 0x111111 }));
             const photoMat = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff });
             const photo = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 2.6), photoMat);
             photo.position.z = 0.06;
-
             frameGroup.add(border);
             frameGroup.add(photo);
             frameGroup.position.set(x, y, z);
@@ -241,19 +248,16 @@
             const benchGroup = new THREE.Group();
             const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });
             const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
-
             const seat = new THREE.Mesh(new THREE.BoxGeometry(4, 0.2, 1.2), woodMat);
             seat.position.y = 1.2;
             seat.castShadow = true;
             benchGroup.add(seat);
-
             const legGeo = new THREE.BoxGeometry(0.2, 1.2, 1);
             const leg1 = new THREE.Mesh(legGeo, metalMat);
             leg1.position.set(-1.8, 0.6, 0);
             const leg2 = new THREE.Mesh(legGeo, metalMat);
             leg2.position.set(1.8, 0.6, 0);
             benchGroup.add(leg1, leg2);
-
             benchGroup.position.set(0, 0, -2); 
             scene.add(benchGroup);
         }
@@ -261,14 +265,15 @@
         function loadCharacters() {
             const loader = new GLTFLoader();
 
-            // Load Boy
+            // 1. TRY LOADING BOY MODEL
             loader.load('boy.glb', (gltf) => {
                 boyModel = gltf.scene;
                 boyModel.position.set(0, 0, 2); 
                 boyModel.traverse((child) => { if (child.isMesh) child.castShadow = true; });
                 scene.add(boyModel);
-            }, undefined, () => {
-                // Placeholder if boy.glb is missing
+            }, undefined, (error) => {
+                // AGAR MODEL NAHI MILA, TOH CAPSULE BANAO
+                console.warn("boy.glb not found, using placeholder.");
                 const boyGeo = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
                 boyModel = new THREE.Mesh(boyGeo, new THREE.MeshStandardMaterial({ color: 0x8B4513 }));
                 boyModel.position.set(0, 1.25, 2);
@@ -276,15 +281,16 @@
                 scene.add(boyModel);
             });
 
-            // Load Girl
+            // 2. TRY LOADING GIRL MODEL
             loader.load('girl.glb', (gltf) => {
                 girlModel = gltf.scene;
                 girlModel.position.set(-2, 0, -6); 
                 girlModel.rotation.y = Math.PI; 
                 girlModel.traverse((child) => { if (child.isMesh) child.castShadow = true; });
                 scene.add(girlModel);
-            }, undefined, () => {
-                // Placeholder if girl.glb is missing
+            }, undefined, (error) => {
+                // AGAR MODEL NAHI MILA, TOH CAPSULE BANAO
+                console.warn("girl.glb not found, using placeholder.");
                 const girlGeo = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
                 girlModel = new THREE.Mesh(girlGeo, new THREE.MeshStandardMaterial({ color: 0x4682B4 }));
                 girlModel.position.set(-2, 1.25, -6);
@@ -293,7 +299,6 @@
             });
         }
 
-        // Fix screen size when rotating phone
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -304,31 +309,27 @@
             requestAnimationFrame(animate);
 
             if (boyModel) {
-                // Move Character
                 if (keys.w) boyModel.position.z -= speed;
                 if (keys.s) boyModel.position.z += speed;
                 if (keys.a) boyModel.position.x -= speed;
                 if (keys.d) boyModel.position.x += speed;
 
-                // Rotate Character
                 if (keys.w) boyModel.rotation.y = Math.PI;
                 if (keys.s) boyModel.rotation.y = 0;
                 if (keys.a) boyModel.rotation.y = -Math.PI / 2;
                 if (keys.d) boyModel.rotation.y = Math.PI / 2;
 
-                // Camera Follow
                 camera.position.x += (boyModel.position.x - camera.position.x) * 0.1;
                 camera.position.z += (boyModel.position.z + 8 - camera.position.z) * 0.1;
                 camera.lookAt(boyModel.position.x, 2, boyModel.position.z);
 
-                // Speech Bubble
                 if (girlModel) {
                     const distance = boyModel.position.distanceTo(girlModel.position);
                     if (distance < 3) {
                         speechBubble.style.display = 'block';
                         const vector = new THREE.Vector3();
                         girlModel.getWorldPosition(vector);
-                        vector.y and += 2.5; 
+                        vector.y += 2.5; 
                         vector.project(camera);
 
                         const x = (vector.x * .5 + .5) * window.innerWidth;
@@ -336,11 +337,11 @@
                         
                         speechBubble.style.left = `${x}px`;
                         speechBubble.style.top = `${y}px`;
- making                    } else {
- the                        speechBubble.style website.display = 'none';
+                    } else {
+                        speechBubble.style.display = 'none';
                     }
                 }
-            look }
+            }
 
             renderer.render(scene, camera);
         }
