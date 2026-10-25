@@ -1,339 +1,349 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Our Museum - For Shruti</title>  
-    <style>  
-        body { margin: 0; overflow: hidden; background-color: #0a0a0a; font-family: 'Georgia', serif; color: white; }  
-          
-        /* LOADING SCREEN */  
-        #loading-screen {  
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;  
-            display: flex; flex-direction: column; justify-content: center; align-items: center;  
-            background-color: #0a0a0a; z-index: 100; transition: opacity 1.5s ease;  
-        }  
-        h1 { font-size: 3rem; font-weight: normal; margin-bottom: 10px; letter-spacing: 2px; }  
-        .names { font-size: 1.2rem; color: #aaa; margin-bottom: 30px; font-style: italic; }  
-        .names span { font-family: sans-serif; font-style: normal; color: #555; margin: 0 10px; }  
-        #start-btn { padding: 12px 40px; background-color: #e0e0e0; color: #000; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }  
-        #start-btn:hover { background-color: #fff; }  
-  
-        /* 3D SCENE & UI */  
-        #scene-container { width: 100vw; height: 100vh; display: none; }  
-        #hint { position: absolute; bottom: 20px; left: 20px; color: rgba(255, 255, 255, 0.5); font-family: sans-serif; font-size: 14px; display: none; }  
-          
-        /* SPEECH BUBBLE */  
-        #speech-bubble {  
-            position: absolute; background: white; color: black; padding: 10px 15px;  
-            border-radius: 15px; font-family: sans-serif; font-size: 14px; font-weight: bold;  
-            display: none; pointer-events: none; transform: translate(-50%, -100%);  
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10;  
-        }  
-        #speech-bubble::after {  
-            content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);  
-            border-width: 8px 8px 0; border-style: solid; border-color: white transparent transparent transparent;  
-        }  
-    </style>  
-      
-    <script type="importmap">  
-        {  
-            "imports": {  
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",  
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"  
-            }  
-        }  
-    </script>  
-</head>  
-<body>  
-  
-    <!-- PAGE 1: LOADING SCREEN -->  
-    <div id="loading-screen">  
-        <h1>Our Museum</h1>  
-        <div class="names">From <span>Saurabh</span> To <span>Shruti</span></div>  
-        <button id="start-btn">Start</button>  
-    </div>  
-  
-    <!-- PAGE 2: 3D MUSEUM -->  
-    <div id="scene-container">  
-        <div id="hint">Use WASD or Arrow Keys to walk. Walk up to Shruti!</div>  
-        <div id="speech-bubble">OMG you made this for me 🥺</div>  
-    </div>  
-  
-    <script type="module">  
-        import * as THREE from 'three';  
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';  
-  
-        // --- UI LOGIC ---  
-        const startBtn = document.getElementById('start-btn');  
-        const loadingScreen = document.getElementById('loading-screen');  
-        const sceneContainer = document.getElementById('scene-container');  
-        const hint = document.getElementById('hint');  
-        const speechBubble = document.getElementById('speech-bubble');  
-  
-        // --- THREE.JS SETUP ---  
-        let scene, camera, renderer, boyModel, girlModel;  
-        let boyMixer, girlMixer; // For animations  
-        let clock = new THREE.Clock();  
-          
-        // Controls & Collision  
-        const keys = { w: false, a: false, s: false, d: false };  
-        const speed = 0.08;  
-        const walls = []; // To stop you from walking through walls  
-  
-        startBtn.addEventListener('click', () => {  
-            loadingScreen.style.opacity = '0';  
-            setTimeout(() => {  
-                loadingScreen.style.display = 'none';  
-                sceneContainer.style.display = 'block';  
-                hint.style.display = 'block';  
-                initThreeJS();  
-            }, 1000);  
-        });  
-  
-        function initThreeJS() {  
-            scene = new THREE.Scene();  
-            scene.background = new THREE.Color(0xf0f0f0);   
-  
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);  
-            camera.position.set(0, 5, 10);   
-  
-            renderer = new THREE.WebGLRenderer({ antialias: true });  
-            renderer.setSize(window.innerWidth, window.innerHeight);  
-            renderer.shadowMap.enabled = true;  
-            sceneContainer.appendChild(renderer.domElement);  
-  
-            // Lighting  
-            scene.add(new THREE.AmbientLight(0xffffff, 0.6));  
-            const light1 = new THREE.DirectionalLight(0xffffff, 1.5);  
-            light1.position.set(5, 10, 5);  
-            light1.castShadow = true;  
-            scene.add(light1);  
-              
-            const light2 = new THREE.PointLight(0xffffff, 0.5);  
-            light2.position.set(-5, 5, 5);  
-            scene.add(light2);  
-  
-            // Build Room  
-            buildRoom();  
-  
-            // Add Photos to Wall  
-            addPhotos();  
-  
-            // Add Bench  
-            addBench();  
-  
-            // Load Characters  
-            loadCharacters();  
-  
-            // Event Listeners  
-            window.addEventListener('keydown', (e) => {  
-                if (e.key === 'w' || e.key === 'ArrowUp') keys.w = true;  
-                if (e.key === 's' || e.key === 'ArrowDown') keys.s = true;  
-                if (e.key === 'a' || e.key === 'ArrowLeft') keys.a = true;  
-                if (e.key === 'd' || e.key === 'ArrowRight') keys.d = true;  
-            });  
-  
-            window.addEventListener('keyup', (e) => {  
-                if (e.key === 'w' || e.key === 'ArrowUp') keys.w = false;  
-                if (e.key === 's' || e.key === 'ArrowDown') keys.s = false;  
-                if (e.key === 'a' || e.key === 'ArrowLeft') keys.a = false;  
-                if (e.key === 'd' || e.key === 'ArrowRight') keys.d = false;  
-            });  
-  
-            window.addEventListener('resize', onWindowResize);  
-            animate();  
-        }  
-  
-        function buildRoom() {  
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0xdddddd });  
-            const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), floorMat);  
-            floor.rotation.x = -Math.PI / 2;  
-            floor.receiveShadow = true;  
-            scene.add(floor);  
-  
-            const wallMat = new THREE.MeshStandardMaterial({ color: 0xffffff });  
-              
-            // Back Wall  
-            const backWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 10), wallMat);  
-            backWall.position.set(0, 5, -10);  
-            backWall.receiveShadow = true;  
-            scene.add(backWall);  
-  
-            // Left Wall  
-            const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 10), wallMat);  
-            leftWall.position.set(-15, 5, 0);  
-            leftWall.rotation.y = Math.PI / 2;  
-            scene.add(leftWall);  
-        }  
-  
-        function addPhotos() {  
-            const textureLoader = new THREE.TextureLoader();  
-              
-            // --- HOW TO ADD YOUR PHOTOS ---  
-            // 1. Save your photos in the same folder as this HTML file.  
-            // 2. Name them photo1.jpg, photo2.jpg, etc.  
-            // 3. Replace 'photo1.jpg' below with your actual file names!  
-              
-            // If you don't have photos yet, it will show a grey square.  
-            const photo1 = textureLoader.load('photo1.jpg', undefined, undefined, (err) => console.log("Add photo1.jpg to folder!"));   
-            const photo2 = textureLoader.load('photo2.jpg', undefined, undefined, (err) => console.log("Add photo2.jpg to folder!"));  
-              
-            createFrame(-3, 4, -9.9, photo1);  
-            createFrame(3, 4, -9.9, photo2);  
-        }  
-  
-        function createFrame(x, y, z, texture) {  
-            const frameGroup = new THREE.Group();  
-              
-            // Black border  
-            const border = new THREE.Mesh(  
-                new THREE.BoxGeometry(2.5, 3, 0.1),  
-                new THREE.MeshStandardMaterial({ color: 0x111111 })  
-            );  
-              
-            // The Photo  
-            const photoMat = new THREE.MeshStandardMaterial({   
-                map: texture || null,   
-                color: texture ? 0xffffff : 0xcccccc // Grey if no photo  
-            });  
-            const photo = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 2.6), photoMat);  
-            photo.position.z = 0.06;  
-  
-            frameGroup.add(border);  
-            frameGroup.add(photo);  
-            frameGroup.position.set(x, y, z);  
-            scene.add(frameGroup);  
-        }  
-  
-        function addBench() {  
-            const benchGroup = new THREE.Group();  
-            const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });  
-            const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333 });  
-  
-            // Seat  
-            const seat = new THREE.Mesh(new THREE.BoxGeometry(4, 0.2, 1.2), woodMat);  
-            seat.position.y = 1.2;  
-            seat.castShadow = true;  
-            seat.receiveShadow = true;  
-            benchGroup.add(seat);  
-  
-            // Legs  
-            const legGeo = new THREE.BoxGeometry(0.2, 1.2, 1);  
-            const leg1 = new THREE.Mesh(legGeo, metalMat);  
-            leg1.position.set(-1.8, 0.6, 0);  
-            const leg2 = new THREE.Mesh(legGeo, metalMat);  
-            leg2.position.set(1.8, 0.6, 0);  
-            benchGroup.add(leg1, leg2);  
-  
-            benchGroup.position.set(0, 0, -2); // Put bench in middle  
-            scene.add(benchGroup);  
-        }  
-  
-        function loadCharacters() {  
-            const loader = new GLTFLoader();  
-  
-            // --- HOW TO ADD THE 3D MODELS ---  
-            // 1. Download models from Sketchfab (GLB format)  
-            // 2. Name the boy's file "boy.glb" and girl's file "girl.glb"  
-            // 3. Put them in the same folder as this HTML file.  
-  
-            // Load Boy (Saurabh)  
-            loader.load('boy.glb', (gltf) => {  
-                boyModel = gltf.scene;  
-                boyModel.position.set(0, 0, 2); // Start position  
-                boyModel.traverse((child) => { if (child.isMesh) child.castShadow = true; });  
-                scene.add(boyModel);  
-  
-                // If the model has animations (like walking), set it up  
-                if (gltf.animations.length > 0) {  
-                    boyMixer = new THREE.AnimationMixer(boyModel);  
-                    // We will handle animations later  
-                }  
-            }, undefined, (error) => {  
-                console.error("Could not load boy.glb. Using placeholder.");  
-                // Fallback placeholder if you haven't downloaded the model yet  
-                const boyGeo = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);  
-                boyModel = new THREE.Mesh(boyGeo, new THREE.MeshStandardMaterial({ color: 0x8B4513 }));  
-                boyModel.position.set(0, 1.25, 2);  
-                boyModel.castShadow = true;  
-                scene.add(boyModel);  
-            });  
-  
-            // Load Girl (Shruti)  
-            loader.load('girl.glb', (gltf) => {  
-                girlModel = gltf.scene;  
-                girlModel.position.set(-2, 0, -6); // Standing near the pictures  
-                girlModel.rotation.y = Math.PI; // Face the pictures  
-                girlModel.traverse((child) => { if (child.isMesh) child.castShadow = true; });  
-                scene.add(girlModel);  
-            }, undefined, (error) => {  
-                console.error("Could not load girl.glb. Using placeholder.");  
-                const girlGeo = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);  
-                girlModel = new THREE.Mesh(girlGeo, new THREE.MeshStandardMaterial({ color: 0x4682B4 }));  
-                girlModel.position.set(-2, 1.25, -6);  
-                girlModel.castShadow = true;  
-                scene.add(girlModel);  
-            });  
-        }  
-  
-        function onWindowResize() {  
-            camera.aspect = window.innerWidth / window.innerHeight;  
-            camera.updateProjectionMatrix();  
-            renderer.setSize(window.innerWidth, window.innerHeight);  
-        }  
-  
-        function animate() {  
-            requestAnimationFrame(animate);  
-            const delta = clock.getDelta();  
-  
-            if (boyModel) {  
-                // Movement  
-                if (keys.w) boyModel.position.z -= speed;  
-                if (keys.s) boyModel.position.z += speed;  
-                if (keys.a) boyModel.position.x -= speed;  
-                if (keys.d) boyModel.position.x += speed;  
-  
-                // Rotate boy to face movement direction  
-                if (keys.w) boyModel.rotation.y = Math.PI;  
-                if (keys.s) boyModel.rotation.y = 0;  
-                if (keys.a) boyModel.rotation.y = -Math.PI / 2;  
-                if (keys.d) boyModel.rotation.y = Math.PI / 2;  
-  
-                // Camera follows boy  
-                camera.position.x += (boyModel.position.x - camera.position.x) * 0.1;  
-                camera.position.z += (boyModel.position.z + 8 - camera.position.z) * 0.1;  
-                camera.lookAt(boyModel.position.x, 2, boyModel.position.z);  
-  
-                // --- SPEECH BUBBLE LOGIC ---  
-                // If the boy gets close to the girl  
-                if (girlModel) {  
-                    const distance = boyModel.position.distanceTo(girlModel.position);  
-                      
-                    if (distance < 3) {  
-                        // Show speech bubble above the girl  
-                        speechBubble.style.display = 'block';  
-                        const vector = new THREE.Vector3();  
-                        girlModel.getWorldPosition(vector);  
-                        vector.y += 2.5; // Raise it above her head  
-                        vector.project(camera);  
-  
-                        const x = (vector.x * .5 + .5) * window.innerWidth;  
-                        const y = (vector.y * -.5 + .5) * window.innerHeight;  
-                          
-                        speechBubble.style.left = `${x}px`;  
-                        speechBubble.style.top = `${y}px`;  
-                    } else {  
-                        speechBubble.style.display = 'none';  
-                    }  
-                }  
-            }  
-  
-            if (boyMixer) boyMixer.update(delta);  
-  
-            renderer.render(scene, camera);  
-        }  
-    </script>  
-</body>  
-</html>  
-- [ ]   
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This meta tag is CRUCIAL for mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Museum - For Shruti</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #0a0a0a; font-family: 'Georgia', serif; color: white; touch-action: none; }
+        
+        /* LOADING SCREEN */
+        #loading-screen {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background-color: #0a0a0a; z-index: 100; transition: opacity 1.5s ease;
+        }
+        h1 { font-size: 2.5rem; font-weight: normal; margin-bottom: 10px; letter-spacing: 2px; text-align: center; }
+        .names { font-size: 1.2rem; color: #aaa; margin-bottom: 30px; font-style: italic; }
+        .names span { font-family: sans-serif; font-style: normal; color: #555; margin: 0 10px; }
+        #start-btn { padding: 12px 40px; background-color: #e0e0e0; color: #000; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+        #start-btn:hover { background-color: #fff; }
+
+        /* 3D SCENE & UI */
+        #scene-container { width: 100vw; height: 100vh; display: none; }
+        #hint { position: absolute; bottom: 20px; left: 20px; color: rgba(255, 255, 255, end0.5); font-family: sans-serif; font-size: 14px; display: none; }
+        
+        /* SPEECH BUBBLE */
+        #speech-bubble {
+            position: absolute; background: white; color: black; padding: 10px 15px;
+            border-radius: 15px; font-family: sans-serif; font-size: 14px; font
+           -weight: bold;
+            const display: none; pointer-events: none bind; transform: translate(-50%, -100%);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10; white-space: nowrap;
+        }
+        #speech-bubble::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            border-width: 8px 8px 0; border-style: solid; border-color: white transparent transparent transparent;
+        }
+
+        /* MOBILE CONTROLS (DPAD) */
+        #mobile-controls {
+            position: absolute; bottom: 30px; right: 30px; display: none;
+            grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px 50px;
+            gap: 5px; z-index: 50;
+        }
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px; color: white; font-size: 24px; display: flex;
+            justify-content: center; align-items: center; user-select: none;
+            -webkit-user-select: none; touch-action: none;
+        }
+        .control-btn:active { background: rgba(255, 255, 255, 0.6); }
+        
+        /* Grid placement for D-Pad */
+        #btn-up { grid-column: 2; grid-row: 1; }
+        #btn-left { grid-column: 1; grid-row: 2; }
+        #btn-down { grid-column: 2; grid-row: 3; }
+        #btn-right { grid-column: 3; grid-row: 2; }
+    </style>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <h1>Our Museum</h1>
+        <div class="names">From <span>Saurabh</span> To <span>Shruti</span></div>
+        <button id="start-btn">Start</button>
+    </div>
+
+    <div id="scene-container">
+        <div id="hint"></div>
+        <div id="speech-bubble">OMG you made this for me 🥺</div>
+        
+        <!-- MOBILE TOUCH CONTROLS -->
+        <div id="mobile-controls">
+            <div class="control-btn" id="btn-up">▲</div>
+            <div class="control-btn" id="btn-left">◀</div>
+            <div class="control-btn" id="btn-right">▶</div>
+            <div class="control-btn" id="btn-down">▼</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // --- UI ELEMENTS ---
+        const startBtn = document.getElementById('start-btn');
+        const loadingScreen = document.getElementById('loading-screen');
+        const sceneContainer = document.getElementById('scene-container');
+        const hint = document.getElementById('hint');
+        const speechBubble = document.getElementById('speech-bubble');
+        const mobileControls = document.getElementById('mobile-controls');
+
+        // --- THREE.JS VARIABLES ---
+        let scene, camera, renderer, boyModel, girlModel;
+        let clock = new THREE.Clock();
+        
+        const keys = { w: false, a: false, s: false, d: false };
+        const speed = 0.08;
+
+        // Check if the device is a mobile phone/tablet
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        startBtn.addEventListener('click', () => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                sceneContainer.style.display = 'block';
+                
+                // Show correct controls based on device
+                if (isMobile) {
+                    mobileControls.style.display = 'grid';
+                } else {
+                    hint.style.display = 'block';
+                    hint.innerText = "Use WASD or Arrow Keys to walk.";
+                }
+                
+                initThreeJS();
+            }, 1000);
+        });
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0); 
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 5, 10); 
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            // Make renderer responsive
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Crisp graphics on mobile
+            renderer.shadowMap.enabled = true;
+            sceneContainer.appendChild(renderer.domElement);
+
+            // Lights
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
+            light1.position.set(5, 10, 5);
+            light1.castShadow = true;
+            scene.add(light1);
+
+            buildRoom();
+            addPhotos();
+            addBench();
+            loadCharacters();
+
+            // Keyboard Controls (Laptop)
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'w' || e.key === 'ArrowUp') keys.w = true;
+                if (e.key === 's' || e.key === 'ArrowDown') keys.s = true;
+                if (e.key === 'a' || e.key === 'ArrowLeft') keys.a = true;
+                if (e.key === 'd' || e.key === 'ArrowRight') keys.d = true;
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'w' || e.key === 'ArrowUp') keys.w = false;
+                if (e.key === 's' || e.key === 'ArrowDown') keys.s = false;
+                if (e.key === 'a' || e.key === 'ArrowLeft') keys.a = false;
+                if (e.key === 'd' || e.key === 'ArrowRight') keys.d = false;
+            });
+
+            // Touch Controls (Mobile)
+            setupMobileControls();
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        // --- MOBILE TOUCH LOGIC ---
+        function setupMobileControls() {
+            const btnUp = document.getElementById('btn-up');
+            const btnDown = document.getElementById('btn-down');
+            const btnLeft = document.getElementById('btn-left');
+            const btnRight = document.getElementById('btn-right');
+
+            // Helper function to handle touch start/Touch = (element, keyName) => {
+                element.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; }, {passive: false});
+                element.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; }, {passive: false});
+                element.addEventListener('touchcancel', (e) => { e.preventDefault(); keys[keyName] = false; }, {passive: false});
+            };
+
+            bindTouch(btnUp, 'w');
+            bindTouch(btnDown, 's');
+            bindTouch(btnLeft, 'a');
+            bindTouch(btnRight, 'd');
+        }
+
+        function buildRoom() {
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0xdddddd });
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            const backWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 10), wallMat);
+            backWall.position.set(0, 5, -10);
+            backWall.receiveShadow = true;
+            scene.add(backWall);
+        }
+
+        function addPhotos() {
+            const textureLoader = new THREE.TextureLoader();
+            // Make sure you have photo1.jpg and photo2.jpg in the same folder!
+            const photo1 = textureLoader.load('photo1.jpg'); 
+            const photo2 = textureLoader.load('photo2.jpg');
+            
+            createFrame(-3, 4, -9.9, photo1);
+            createFrame(3, 4, -9.9, photo2);
+        }
+
+        function createFrame(x, y, z, texture) {
+            const frameGroup = new THREE.Group();
+            
+            const border = new THREE.Mesh(
+                new THREE.BoxGeometry(2.5, 3, 0.1),
+                new THREE.MeshStandardMaterial({ color: 0x111111 })
+            );
+            
+            const photoMat = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff });
+            const photo = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 2.6), photoMat);
+            photo.position.z = 0.06;
+
+            frameGroup.add(border);
+            frameGroup.add(photo);
+            frameGroup.position.set(x, y, z);
+            scene.add(frameGroup);
+        }
+
+        function addBench() {
+            const benchGroup = new THREE.Group();
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });
+            const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(4, 0.2, 1.2), woodMat);
+            seat.position.y = 1.2;
+            seat.castShadow = true;
+            benchGroup.add(seat);
+
+            const legGeo = new THREE.BoxGeometry(0.2, 1.2, 1);
+            const leg1 = new THREE.Mesh(legGeo, metalMat);
+            leg1.position.set(-1.8, 0.6, 0);
+            const leg2 = new THREE.Mesh(legGeo, metalMat);
+            leg2.position.set(1.8, 0.6, 0);
+            benchGroup.add(leg1, leg2);
+
+            benchGroup.position.set(0, 0, -2); 
+            scene.add(benchGroup);
+        }
+
+        function loadCharacters() {
+            const loader = new GLTFLoader();
+
+            // Load Boy
+            loader.load('boy.glb', (gltf) => {
+                boyModel = gltf.scene;
+                boyModel.position.set(0, 0, 2); 
+                boyModel.traverse((child) => { if (child.isMesh) child.castShadow = true; });
+                scene.add(boyModel);
+            }, undefined, () => {
+                // Placeholder if boy.glb is missing
+                const boyGeo = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
+                boyModel = new THREE.Mesh(boyGeo, new THREE.MeshStandardMaterial({ color: 0x8B4513 }));
+                boyModel.position.set(0, 1.25, 2);
+                boyModel.castShadow = true;
+                scene.add(boyModel);
+            });
+
+            // Load Girl
+            loader.load('girl.glb', (gltf) => {
+                girlModel = gltf.scene;
+                girlModel.position.set(-2, 0, -6); 
+                girlModel.rotation.y = Math.PI; 
+                girlModel.traverse((child) => { if (child.isMesh) child.castShadow = true; });
+                scene.add(girlModel);
+            }, undefined, () => {
+                // Placeholder if girl.glb is missing
+                const girlGeo = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
+                girlModel = new THREE.Mesh(girlGeo, new THREE.MeshStandardMaterial({ color: 0x4682B4 }));
+                girlModel.position.set(-2, 1.25, -6);
+                girlModel.castShadow = true;
+                scene.add(girlModel);
+            });
+        }
+
+        // Fix screen size when rotating phone
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (boyModel) {
+                // Move Character
+                if (keys.w) boyModel.position.z -= speed;
+                if (keys.s) boyModel.position.z += speed;
+                if (keys.a) boyModel.position.x -= speed;
+                if (keys.d) boyModel.position.x += speed;
+
+                // Rotate Character
+                if (keys.w) boyModel.rotation.y = Math.PI;
+                if (keys.s) boyModel.rotation.y = 0;
+                if (keys.a) boyModel.rotation.y = -Math.PI / 2;
+                if (keys.d) boyModel.rotation.y = Math.PI / 2;
+
+                // Camera Follow
+                camera.position.x += (boyModel.position.x - camera.position.x) * 0.1;
+                camera.position.z += (boyModel.position.z + 8 - camera.position.z) * 0.1;
+                camera.lookAt(boyModel.position.x, 2, boyModel.position.z);
+
+                // Speech Bubble
+                if (girlModel) {
+                    const distance = boyModel.position.distanceTo(girlModel.position);
+                    if (distance < 3) {
+                        speechBubble.style.display = 'block';
+                        const vector = new THREE.Vector3();
+                        girlModel.getWorldPosition(vector);
+                        vector.y and += 2.5; 
+                        vector.project(camera);
+
+                        const x = (vector.x * .5 + .5) * window.innerWidth;
+                        const y = (vector.y * -.5 + .5) * window.innerHeight;
+                        
+                        speechBubble.style.left = `${x}px`;
+                        speechBubble.style.top = `${y}px`;
+ making                    } else {
+ the                        speechBubble.style website.display = 'none';
+                    }
+                }
+            look }
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
