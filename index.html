@@ -1,20 +1,18 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#100d0c">
-<title>Our Museum — A little world for two</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Our Museum ❤️</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap');
-:root{--cream:#eee4d8;--rose:#d99aa8;--gold:#c7a77f;--ink:#171311}
+:root{--cream:#eee4d8;--rose:#d99aa8;--gold:#c7a77f}
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171311;color:var(--cream);font-family:'DM Sans',sans-serif}
 button{font:inherit;cursor:pointer;color:inherit}
-button:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
 #world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.landing{position:fixed;inset:0;z-index:5;display:grid;place-items:center;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 43%,#3a2527 0,#1b1515 42%,#090808 100%);transition:opacity .8s,visibility .8s}
+.landing{position:fixed;inset:0;z-index:5;display:grid;place-items:center;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 43%,#3a2527,#1b1515 48%,#090808);transition:opacity .8s,visibility .8s}
 .landing.gone{opacity:0;visibility:hidden;pointer-events:none}
 .eyebrow,.bottom,.caption{font-size:10px;letter-spacing:.24em;text-transform:uppercase}
 .eyebrow{color:#c8b6aa}
@@ -25,50 +23,32 @@ button:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
 .bottom{position:absolute;bottom:23px;left:0;right:0;color:#766b67;font-size:9px}
 .hud{position:fixed;z-index:2;inset:0;pointer-events:none;display:none}
 .hud.on{display:block}
-.brand{position:absolute;top:max(22px,env(safe-area-inset-top));left:22px;font:italic clamp(22px,2.6vw,34px) 'Playfair Display',serif;text-shadow:0 2px 12px #000;color:#f0e3d3}
-.controls{position:absolute;top:max(18px,env(safe-area-inset-top));right:18px;display:flex;gap:9px;pointer-events:auto}
-.chip{border:1px solid #e0cfb366;background:rgba(24,20,18,.82);backdrop-filter:blur(10px);padding:11px 15px;border-radius:99px;font-size:11px;letter-spacing:.04em;white-space:nowrap;box-shadow:0 3px 16px #0003}
-.help{position:absolute;top:72px;left:23px;color:#d7c9b9;font-size:11px;line-height:1.75;text-shadow:0 2px 9px #000;max-width:75%}
-.crosshair{position:absolute;left:50%;top:50%;width:7px;height:7px;border:1px solid #fff9;border-radius:50%;transform:translate(-50%,-50%);opacity:.7}
-.prompt{position:absolute;left:50%;bottom:19%;transform:translateX(-50%);background:#100d0de8;border:1px solid #c7b08e99;padding:11px 15px;font:italic 15px 'Playfair Display',serif;white-space:nowrap;opacity:0;transition:opacity .2s}
+.brand{position:absolute;top:22px;left:22px;font:italic clamp(22px,2.6vw,34px) 'Playfair Display',serif;text-shadow:0 2px 12px #000}
+.controls{position:absolute;top:18px;right:18px;display:flex;gap:9px;pointer-events:auto}
+.chip{border:1px solid #e0cfb366;background:#181412dd;backdrop-filter:blur(10px);padding:11px 15px;border-radius:99px;font-size:11px;white-space:nowrap;box-shadow:0 3px 16px #0003}
+.help{position:absolute;top:72px;left:23px;color:#d7c9b9;font-size:11px;line-height:1.75;text-shadow:0 2px 9px #000}
+.crosshair{position:absolute;left:50%;top:50%;width:7px;height:7px;border:1px solid #fff9;border-radius:50%;transform:translate(-50%,-50%)}
+.prompt{position:absolute;left:50%;bottom:19%;transform:translateX(-50%);background:#100d0de8;border:1px solid #c7b08e99;padding:11px 15px;font:italic 15px 'Playfair Display',serif;white-space:nowrap;opacity:0}
 .prompt.show{opacity:1}
-.joystick{position:absolute;left:clamp(22px,4vw,58px);bottom:clamp(22px,4vh,42px);width:132px;height:132px;border-radius:50%;border:1px solid #eee0ce66;background:#08070655;pointer-events:auto;touch-action:none;display:none}
+.joystick{position:absolute;left:22px;bottom:30px;width:112px;height:112px;border-radius:50%;border:1px solid #eee0ce66;background:#08070655;pointer-events:auto;touch-action:none;display:none}
 .joyknob{position:absolute;left:50%;top:50%;width:44px;height:44px;border-radius:50%;transform:translate(-50%,-50%);background:#e9dfd255;border:1px solid #eee0ceaa}
 .lookpad{position:absolute;right:0;bottom:0;width:43%;height:64%;pointer-events:auto;touch-action:none;display:none}
 .caption{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);font-size:8px;color:#f0e3d2b8;text-align:center;white-space:nowrap}
+.mobile-actions{position:absolute;right:18px;bottom:28px;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
 .modal{position:fixed;z-index:8;inset:0;background:#050404ed;display:none;place-items:center;padding:22px}
 .modal.show{display:grid}
-.modalbox{width:min(90vw,520px);border:1px solid #9e8b72;background:#15100f;padding:15px;box-shadow:0 20px 80px #000}
-.modalbox img{width:100%;max-height:55vh;object-fit:contain;background:#080707}
-.modalbox h2{font:italic 27px 'Playfair Display',serif;font-weight:400;text-align:center;margin:14px 0 5px}
+.modalbox{width:min(90vw,520px);border:1px solid #9e8b72;background:#15100f;padding:15px}
+.modalbox img{width:100%;max-height:55vh;object-fit:contain}
+.modalbox h2{text-align:center;font:italic 27px 'Playfair Display',serif}
 .modalbox p{text-align:center;color:#b7a9a0;font-size:12px}
-.modal-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.filebtn{display:inline-block;padding:10px 14px;border:1px solid #9e8b72;border-radius:99px;font-size:10px;letter-spacing:.06em}
+.filebtn{display:inline-block;padding:10px 14px;border:1px solid #9e8b72;border-radius:99px;font-size:10px}
 .filebtn input{display:none}
-.toast{position:fixed;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);background:#100d0df5;border:1px solid #bca98c;padding:22px;max-width:85vw;text-align:center;display:none}
-.toast.show{display:block}
-.toast h3{font:italic 24px 'Playfair Display',serif;font-weight:400}
-.toast button{margin-top:10px}
-.mobile-actions{position:absolute;right:20px;bottom:clamp(24px,4vh,42px);display:flex;flex-direction:column;gap:8px;pointer-events:auto}
-.mobile-actions .chip{padding:12px 14px}
-@media(max-width:700px){
-.joystick,.lookpad{display:block}
-.brand{font-size:20px;top:72px;left:15px}
-.controls{top:14px;left:12px;right:12px;justify-content:flex-end;gap:5px}
-.chip{padding:9px 10px;font-size:9px}
-.help{top:112px;max-width:80%;font-size:10px}
-.caption{bottom:14px;font-size:7px;max-width:70%;white-space:normal}
-.landing h1{font-size:clamp(62px,17vw,86px)}
-.prompt{bottom:20%;font-size:13px}
-.mobile-actions{bottom:160px;right:12px}
-.mobile-actions .chip{font-size:9px}
-.joystick{width:108px;height:108px;left:18px;bottom:26px}
-.lookpad{width:48%;height:45%}
-}
+.modal-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+#modelStatus{position:fixed;z-index:20;bottom:8px;left:8px;max-width:calc(100% - 16px);background:#171311ed;color:#fff;border:1px solid #c7a77f;border-radius:8px;padding:8px 12px;font:11px sans-serif;pointer-events:none}
+@media(max-width:700px){.brand{top:65px;left:14px;font-size:21px}.controls{top:12px;left:10px;right:10px;justify-content:flex-end;gap:5px}.chip{padding:9px 10px;font-size:9px}.help{top:105px;left:14px;font-size:10px}.landing h1{font-size:clamp(62px,17vw,86px)}.joystick,.lookpad{display:block}.lookpad{width:48%;height:45%}.caption{font-size:7px;white-space:normal;bottom:12px}.mobile-actions{right:10px;bottom:160px}.prompt{font-size:12px}}
 </style>
 </head>
 <body>
-
 <section class="landing" id="landing">
   <div>
     <div class="eyebrow">A little place made just for us</div>
@@ -79,8 +59,7 @@ button:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
   <div class="bottom">A private universe for two · made with love ♥</div>
 </section>
 
-<canvas id="world" aria-label="Interactive 3D museum"></canvas>
-
+<canvas id="world"></canvas>
 <div class="hud" id="hud">
   <div class="brand">Our Museum <span style="color:#d9a2ad">♥</span></div>
   <div class="controls">
@@ -89,7 +68,7 @@ button:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
     <button class="chip" id="exit">← Home</button>
     <input type="file" id="photos" accept="image/*" multiple hidden>
   </div>
-  <div class="help">WASD / arrow keys to walk · drag to look<br>On phone: left joystick to walk, drag right side to look · tap a nearby frame or press E</div>
+  <div class="help">WASD / arrow keys to walk · drag to look<br>Phone: joystick to walk · drag right side to look · E to open frame</div>
   <div class="crosshair"></div>
   <div class="prompt" id="prompt">♡ Press E to open memory</div>
   <div class="joystick" id="joystick"><div class="joyknob" id="joyknob"></div></div>
@@ -108,574 +87,307 @@ button:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
     <p id="modalCaption">One little moment, kept forever.</p>
     <div class="modal-actions">
       <label class="filebtn">Replace photo<input id="replacePhoto" type="file" accept="image/*"></label>
-      <button class="chip" id="close">Close memory ✕</button>
+      <button class="chip" id="close">Close ✕</button>
     </div>
   </div>
 </div>
-
-<div class="toast" id="loading">
-  <h3>Our little universe</h3>
-  <p id="loadText">Opening the museum…</p>
-  <button class="chip" id="retry">Try again</button>
-</div>
+<div id="modelStatus">3D museum ready to initialize.</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
 <script>
-(()=>{
+(() => {
 'use strict';
-
 const $=id=>document.getElementById(id);
-const landing=$('landing'),hud=$('hud'),canvas=$('world'),promptEl=$('prompt'),modal=$('modal');
-
-let renderer,scene,camera,clock,started=false,raf=0,activeFrame=null;
-let lookYaw=0,lookPitch=0,move={x:0,y:0},keys={},lastTouch=null;
-let playing=false,audioCtx,master,musicTimer,step=0,dancing=false,sitting=false;
-const frames=[];
+const canvas=$('world'),statusEl=$('modelStatus'),frames=[];
+let scene,camera,renderer,clock,raf=0,started=false;
+let player,partner,lookYaw=0,lookPitch=0,activeFrame=null;
+let keys={},move={x:0,y:0},joyId=null,lastLook=null;
+let dancing=false,sitting=false,playing=false,audioCtx,master,musicTimer,noteIndex=0;
+let gltfLoader=null;
+const MODEL_PATHS={man:'./models/man.glb',woman:'./models/woman.glb'};
 const captions=['The beginning','My favourite place','Always us','Little adventures','You feel like home','Our forever','The little things','Just us'];
 
-function mat(color,rough=.82,extra={}) {
-  return new THREE.MeshStandardMaterial({color,roughness:rough,...extra});
-}
-function box(w,h,d,x,y,z,material,parent=scene) {
-  const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
-  o.position.set(x,y,z);parent.add(o);return o;
+function status(message){statusEl.textContent=message;console.log('[Our Museum]',message)}
+function mat(color,roughness=.8,extra={}){return new THREE.MeshStandardMaterial({color,roughness,...extra})}
+function box(w,h,d,x,y,z,material,parent=scene){
+ const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);parent.add(o);return o;
 }
 function sphere(r,sx,sy,sz,x,y,z,material,parent=scene){
-  const o=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),material);
-  o.scale.set(sx,sy,sz);o.position.set(x,y,z);parent.add(o);return o;
+ const o=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),material);o.scale.set(sx,sy,sz);o.position.set(x,y,z);parent.add(o);return o;
 }
-function placeholder(i) {
-  const c=document.createElement('canvas');c.width=480;c.height=640;
-  const x=c.getContext('2d');
-  const colors=[['#5c4545','#c9a18f'],['#514b42','#d1b99d'],['#494454','#b6a0b2'],['#44514a','#b4b9a4'],['#664a4a','#d1a6a0'],['#404653','#a9b2c0']][i%6];
-  const g=x.createLinearGradient(0,0,480,640);
-  g.addColorStop(0,colors[0]);g.addColorStop(1,colors[1]);
-  x.fillStyle=g;x.fillRect(0,0,480,640);
-  x.fillStyle='#fff3e8';x.globalAlpha=.12;x.beginPath();x.arc(360,130,100,0,Math.PI*2);x.fill();
-  x.globalAlpha=.23;x.beginPath();x.moveTo(0,490);x.quadraticCurveTo(130,350,250,500);x.quadraticCurveTo(370,600,480,450);x.lineTo(480,640);x.lineTo(0,640);x.fill();
-  x.globalAlpha=1;x.fillStyle='#fff2e7';x.textAlign='center';x.font='italic 42px Georgia';
-  x.fillText('Memory '+['I','II','III','IV','V','VI','VII','VIII'][i%8],240,315);
-  x.font='14px sans-serif';x.fillText('ADD YOUR PHOTO',240,354);x.font='38px Georgia';x.fillText('♥',240,550);
-  return c;
+function placeholder(i){
+ const c=document.createElement('canvas');c.width=480;c.height=640;
+ const x=c.getContext('2d');
+ const colors=[['#5c4545','#c9a18f'],['#514b42','#d1b99d'],['#494454','#b6a0b2'],['#44514a','#b4b9a4'],['#664a4a','#d1a6a0'],['#404653','#a9b2c0']];
+ const pair=colors[i%colors.length],g=x.createLinearGradient(0,0,480,640);
+ g.addColorStop(0,pair[0]);g.addColorStop(1,pair[1]);x.fillStyle=g;x.fillRect(0,0,480,640);
+ x.fillStyle='#fff3e8';x.globalAlpha=.12;x.beginPath();x.arc(360,130,100,0,Math.PI*2);x.fill();
+ x.globalAlpha=.23;x.beginPath();x.moveTo(0,490);x.quadraticCurveTo(130,350,250,500);x.quadraticCurveTo(370,600,480,450);x.lineTo(480,640);x.lineTo(0,640);x.fill();
+ x.globalAlpha=1;x.fillStyle='#fff2e7';x.textAlign='center';x.font='italic 42px Georgia';x.fillText('Memory '+['I','II','III','IV','V','VI'][i%6],240,315);
+ x.font='14px sans-serif';x.fillText('ADD YOUR PHOTO',240,354);x.font='38px Georgia';x.fillText('♥',240,550);
+ return c;
 }
-function texture(img) {
-  const t=new THREE.Texture(img);t.needsUpdate=true;t.encoding=THREE.sRGBEncoding;return t;
+function makePerson(colors,x,z,style){
+ const g=new THREE.Group();g.position.set(x,0,z);
+ const shirt=mat(colors.top),skin=mat(colors.skin),hair=mat(colors.hair),pants=mat(colors.pants),shoes=mat(colors.shoes);
+ box(.34,.25,.22,0,.78,0,pants,g);box(style==='female'?.38:.43,.57,.24,0,1.12,0,shirt,g);
+ box(.105,.13,.11,0,1.47,0,skin,g);sphere(.135,1,.99,.88,0,1.64,0,skin,g);
+ sphere(.142,1.04,.60,1,0,1.72,-.035,hair,g);
+ if(style==='female'){sphere(.105,.72,1.22,.72,0,1.57,-.095,hair,g);sphere(.065,.8,1.7,.8,-.105,1.57,-.025,hair,g);sphere(.065,.8,1.7,.8,.105,1.57,-.025,hair,g)}
+ else sphere(.11,1,.48,.8,0,1.75,.01,hair,g);
+ const arms=[],legs=[];
+ for(const s of [-1,1]){
+  const upper=box(.125,.29,.13,s*.30,1.08,0,shirt,g);upper.rotation.z=s*-.10;
+  const fore=box(.105,.25,.11,s*.32,.84,.015,skin,g);fore.rotation.z=s*-.04;
+  arms.push(upper,fore);legs.push(box(.145,.48,.16,s*.105,.43,0,pants,g));box(.17,.10,.27,s*.105,.105,.045,shoes,g);
+ }
+ g.userData={arms,legs,phase:Math.random()*5,isRigged:false,activeClipType:''};scene.add(g);return g;
 }
+function requestClip(character,type){
+ if(!character?.userData?.mixer)return false;
+ const clips=character.userData.clips||[];
+ const terms={idle:['idle','stand','breath','rest'],walk:['walk','walking','run','locomotion'],dance:['dance','dancing','salsa','hip'],sit:['sit','sitting','chair']}[type]||[type];
+ const clip=clips.find(c=>terms.some(k=>c.name.toLowerCase().includes(k)));
+ if(!clip)return false;
+ const next=character.userData.mixer.clipAction(clip);
+ if(character.userData.currentAction!==next){
+  if(character.userData.currentAction)character.userData.currentAction.crossFadeTo(next,.22,true);
+  next.reset();next.enabled=true;next.setEffectiveWeight(1);next.setEffectiveTimeScale(1);
+  next.setLoop(THREE.LoopRepeat,Infinity);next.play();character.userData.currentAction=next;
+ }
+ character.userData.activeClipType=type;return true;
+}
+function loadRiggedCharacter(url,oldCharacter,label){
+ return new Promise(resolve=>{
+  if(!window.THREE||!THREE.GLTFLoader){status('ERROR: GLTFLoader script did not load.');resolve(oldCharacter);return}
+  if(!gltfLoader)gltfLoader=new THREE.GLTFLoader();
+  status('Loading '+label+' character...');
+  gltfLoader.load(url,gltf=>{
+   try{
+    const model=gltf.scene||gltf.scenes?.[0];
+    if(!model)throw new Error('GLB has no scene');
+    model.updateMatrixWorld(true);
+    let bounds=new THREE.Box3().setFromObject(model);
+    let size=bounds.getSize(new THREE.Vector3());
+    if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid model height');
+    model.scale.multiplyScalar(1.7/size.y);model.updateMatrixWorld(true);
+    bounds.setFromObject(model);
+    const center=bounds.getCenter(new THREE.Vector3());
+    model.position.x-=center.x;model.position.z-=center.z;model.position.y-=bounds.min.y;
+    const wrapper=new THREE.Group();
+    wrapper.position.copy(oldCharacter.position);wrapper.rotation.copy(oldCharacter.rotation);wrapper.add(model);
+    wrapper.userData.isRigged=true;wrapper.userData.label=label;
+    wrapper.userData.clips=gltf.animations||[];wrapper.userData.mixer=new THREE.AnimationMixer(model);
+    wrapper.userData.currentAction=null;wrapper.userData.activeClipType='';
+    scene.add(wrapper);scene.remove(oldCharacter);
+    if(label==='Man')player=wrapper;else partner=wrapper;
+    if(wrapper.userData.clips.length){
+     status(label+' loaded. Clips: '+wrapper.userData.clips.map(c=>c.name).join(', '));
+     if(!requestClip(wrapper,'idle')){
+      const first=wrapper.userData.clips[0],action=wrapper.userData.mixer.clipAction(first);
+      action.play();wrapper.userData.currentAction=action;wrapper.userData.activeClipType='idle';
+     }
+    }else status(label+' model loaded, but has NO embedded animations.');
+    resolve(wrapper);
+   }catch(e){console.error(e);status(label+' model setup error: '+e.message);resolve(oldCharacter)}
+  },event=>{
+   if(event.total)status('Loading '+label+': '+Math.round(event.loaded/event.total*100)+'%');
+  },error=>{
+   console.error('GLB load error:',url,error);status('Failed to load '+label+' GLB. Check model path/console.');resolve(oldCharacter);
+  });
+ });
+}
+function loadOurCharacters(){
+ const oldMan=player,oldWoman=partner;
+ loadRiggedCharacter(MODEL_PATHS.man,oldMan,'Man');
+ loadRiggedCharacter(MODEL_PATHS.woman,oldWoman,'Woman');
+}
+function addFrame(pos,rot,i){
+ const group=new THREE.Group();group.position.set(...pos);group.rotation.y=rot;scene.add(group);
+ box(1.36,1.78,.10,0,0,0,mat('#211a16'),group);box(1.27,1.69,.045,0,0,.061,mat('#bba58a'),group);
+ const tex=new THREE.CanvasTexture(placeholder(i));tex.colorSpace=THREE.SRGBColorSpace;
+ const art=new THREE.Mesh(new THREE.PlaneGeometry(1.16,1.58),new THREE.MeshStandardMaterial({map:tex,roughness:.94}));
+ art.position.z=.09;group.add(art);
+ const lamp=new THREE.SpotLight('#ffd6a0',.9,5,Math.PI/5,.7,1.8);
+ lamp.position.set(0,1.25,.65);lamp.target.position.set(0,0,0);group.add(lamp,lamp.target);
+ frames.push({group,art,tex,index:i,title:captions[i%captions.length],caption:'One little moment, kept forever.',pos:new THREE.Vector3(pos[0],1.6,pos[2])});
+}
+function init(){
+ try{
+  if(!window.THREE)throw new Error('Three.js library failed to load.');
+  scene=new THREE.Scene();scene.background=new THREE.Color('#28221e');scene.fog=new THREE.Fog('#28221e',27,52);
+  camera=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.1,100);
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.setSize(innerWidth,innerHeight);
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.72;
+  clock=new THREE.Clock();
+  scene.add(new THREE.HemisphereLight('#d9c0a3','#302620',.65));scene.add(new THREE.AmbientLight('#c8a98a',.25));
+  const key=new THREE.DirectionalLight('#eac7a0',.55);key.position.set(-3,8,4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
 
-/* Original placeholder characters remain visible until the GLB files load. */
-function makePerson({top,skin,hair,pants,shoes},x,z,style='male') {
-  const g=new THREE.Group();g.position.set(x,0,z);
-  const shirt=mat(top),skinM=mat(skin),hairM=mat(hair),pantsM=mat(pants),shoeM=mat(shoes);
-  box(.34,.25,.22,0,.78,0,pantsM,g);
-  const torso=box(style==='female'?.38:.43,.57,.24,0,1.12,0,shirt,g);torso.rotation.z=-.025;
-  box(.105,.13,.11,0,1.47,0,skinM,g);
-  sphere(.135,1,.99,.88,0,1.64,0,skinM,g);
-  sphere(.142,1.04,.60,1,0,1.72,-.035,hairM,g);
-  if(style==='female') {
-    sphere(.105,.72,1.22,.72,0,1.57,-.095,hairM,g);
-    sphere(.065,.8,1.7,.8,-.105,1.57,-.025,hairM,g);
-    sphere(.065,.8,1.7,.8,.105,1.57,-.025,hairM,g);
-  } else {
-    sphere(.11,1,.48,.8,0,1.75,.01,hairM,g);
+  box(18,.28,28,0,-.16,-5,mat('#62554a'));box(18,.22,28,0,5.25,-5,mat('#302822'));
+  box(18,5.35,.3,0,2.5,-19,mat('#51443a'));box(.3,5.35,28,-9,2.5,-5,mat('#493d34'));
+  box(.3,5.35,28,9,2.5,-5,mat('#493d34'));box(18,5.35,.3,0,2.5,9,mat('#51443a'));
+  const lineM=mat('#8b7865');
+  for(let x=-8;x<=8;x+=2)box(.018,.012,27,x,.002,-5,lineM);
+  for(let z=-18;z<=8;z+=2)box(17,.012,.018,0,.003,z,lineM);
+  for(const [x,z] of [[-5,-15],[0,-15],[5,-15],[-8,-9],[-8,-2],[-8,5],[8,-9],[8,-2],[8,5]]){
+   const l=new THREE.PointLight('#e9b982',.42,6);l.position.set(x,3.9,z);scene.add(l);
   }
-  const arms=[],legs=[];
-  for(const side of [-1,1]) {
-    const shoulder=box(.15,.25,.16,side*.265,1.28,0,shirt,g);shoulder.rotation.z=side*-.08;
-    const upper=box(.125,.29,.13,side*.30,1.08,0,shirt,g);upper.rotation.z=side*-.10;
-    const fore=box(.105,.25,.11,side*.32,.84,.015,skinM,g);fore.rotation.z=side*-.04;
-    arms.push(upper,fore);
-    const leg=box(.145,.48,.16,side*.105,.43,0,pantsM,g);legs.push(leg);
-    box(.17,.10,.27,side*.105,.105,.045,shoeM,g);
-  }
-  g.userData={legs,arms,phase:Math.random()*5,baseY:0,style,isRigged:false};
-  scene.add(g);return g;
-}
-
-let player,partner,bench;
-
-/* ---------------- REAL GLB CHARACTER SUPPORT ---------------- */
-
-const MODEL_PATHS={
-  man:'./models/man.glb',
-  woman:'./models/woman.glb'
-};
-let gltfLoader=null;
-
-function requestClip(character,type) {
-  if(!character?.userData?.mixer || !character.userData.clips) return false;
-
-  const keywords={
-    idle:['idle','stand','breath','rest'],
-    walk:['walk','walking','run','locomotion'],
-    dance:['dance','dancing','salsa','hip'],
-    sit:['sit','sitting','chair']
-  }[type]||[type];
-
-  const clip=character.userData.clips.find(c=>
-    keywords.some(word=>c.name.toLowerCase().includes(word))
-  );
-  if(!clip) return false;
-
-  const next=character.userData.mixer.clipAction(clip);
-  if(character.userData.currentAction!==next) {
-    if(character.userData.currentAction) {
-      character.userData.currentAction.crossFadeTo(next,.22,true);
-    }
-    next.reset();
-    next.enabled=true;
-    next.setEffectiveWeight(1);
-    next.setEffectiveTimeScale(1);
-    next.setLoop(THREE.LoopRepeat,Infinity);
-    next.play();
-    character.userData.currentAction=next;
-  }
-  character.userData.activeClipType=type;
+  for(let i=0;i<5;i++)addFrame([-6.2+i*3.1,2.75,-18.78],0,i);
+  for(let i=0;i<4;i++)addFrame([-8.78,2.55,-14+i*6],Math.PI/2,i+5);
+  for(let i=0;i<4;i++)addFrame([8.78,2.55,-14+i*6],-Math.PI/2,i+9);
+  const bench=new THREE.Group();bench.position.set(0,0,-8.5);scene.add(bench);
+  box(2.25,.13,.58,0,.63,0,mat('#7a5d43'),bench);box(2.2,.1,.55,0,.74,0,mat('#c7b69e'),bench);
+  for(const x of [-.82,.82])box(.12,.62,.12,x,.31,0,mat('#44372e'),bench);
+  for(const [x,z] of [[-3,-8],[3,-12]]){box(.7,.8,.7,x,.4,z,mat('#9c8b79'));sphere(.17,1,1,1,x,.91,z,mat('#d7a2ac',.3,{emissive:'#4b1827',emissiveIntensity:.3}))}
+  player=makePerson({top:'#8b6349',skin:'#b98065',hair:'#30221c',pants:'#574333',shoes:'#251d18'},-.42,1.8,'male');
+  partner=makePerson({top:'#d8c8b7',skin:'#d7a58d',hair:'#4a2c24',pants:'#35566b',shoes:'#c6b6a6'},.42,2.05,'female');
+  camera.position.set(0,3.35,9);lookYaw=0;lookPitch=0;
+  loadOurCharacters();status('Museum ready. Loading man.glb and woman.glb...');
   return true;
+ }catch(e){console.error('Scene initialization error:',e);status('SCENE ERROR: '+e.message);return false}
 }
-
-function loadRiggedCharacter(url,oldCharacter,label) {
-  return new Promise(resolve=>{
-    if(!THREE.GLTFLoader) {
-      console.warn('GLTFLoader unavailable; keeping procedural '+label);
-      resolve(oldCharacter);return;
-    }
-    if(!gltfLoader) gltfLoader=new THREE.GLTFLoader();
-
-   gltfLoader.load(
-  url,
-  (gltf) => {
-    console.log("✅ GLB loaded:", url);
-    console.log("Animation clips:", gltf.animations.map(a => a.name));
-    console.log("Model:", gltf.scene);
-      try {
-        const model=gltf.scene||gltf.scenes[0];
-        const wrapper=new THREE.Group();
-        wrapper.add(model);
-
-        let bounds=new THREE.Box3().setFromObject(model);
-        const size=bounds.getSize(new THREE.Vector3());
-        if(!Number.isFinite(size.y)||size.y<.05) throw new Error('Model has no measurable height');
-
-        /* Fit the model to a human-sized height and place feet at floor level. */
-        model.scale.multiplyScalar(1.7/size.y);
-        bounds.setFromObject(model);
-        const center=bounds.getCenter(new THREE.Vector3());
-        model.position.x-=center.x;
-        model.position.z-=center.z;
-        model.position.y-=bounds.min.y;
-
-        wrapper.position.copy(oldCharacter.position);
-        wrapper.rotation.copy(oldCharacter.rotation);
-        wrapper.userData.isRigged=true;
-        wrapper.userData.label=label;
-        wrapper.userData.mixer=new THREE.AnimationMixer(model);
-        wrapper.userData.clips=gltf.animations||[];
-        wrapper.userData.currentAction=null;
-        wrapper.userData.activeClipType='';
-
-        scene.add(wrapper);
-        scene.remove(oldCharacter);
-
-        if(wrapper.userData.clips.length) {
-          requestClip(wrapper,'idle');
-          console.info(label+' model loaded. Animation clips:',wrapper.userData.clips.map(c=>c.name));
-        } else {
-          console.warn(label+' model loaded, but contains no animation clips.');
-        }
-        resolve(wrapper);
-      } catch(error) {
-        console.error('Could not prepare '+label+' model:',error);
-        resolve(oldCharacter);
-      }
-    },undefined,error=>{
-      console.error('Could not load '+label+' model at '+url,error);
-      resolve(oldCharacter);
-    });
-  });
+function start(){
+ if(started)return;
+ if(!scene&&!init())return;
+ started=true;$('landing').classList.add('gone');$('hud').classList.add('on');
+ clock.start();cancelAnimationFrame(raf);animate();
 }
-
-function loadOurCharacters() {
-  const originalPlayer=player;
-  const originalPartner=partner;
-
-  loadRiggedCharacter(MODEL_PATHS.man,originalPlayer,'Man').then(model=>{
-    if(model!==originalPlayer) player=model;
-  });
-  loadRiggedCharacter(MODEL_PATHS.woman,originalPartner,'Woman').then(model=>{
-    if(model!==originalPartner) partner=model;
-  });
-}
-
-/* ---------------- MUSEUM FRAMES ---------------- */
-
-function addFrame(pos,rot,i) {
-  const group=new THREE.Group();group.position.set(...pos);group.rotation.y=rot;scene.add(group);
-  box(1.36,1.78,.10,0,0,0,mat('#211a16'),group);
-  box(1.27,1.69,.045,0,0,.061,mat('#bba58a'),group);
-  const tex=texture(placeholder(i));
-  const art=new THREE.Mesh(
-    new THREE.PlaneGeometry(1.16,1.58),
-    new THREE.MeshStandardMaterial({map:tex,roughness:.94,emissive:'#100b08',emissiveIntensity:.025})
-  );
-  art.position.z=.09;group.add(art);
-  const lamp=new THREE.SpotLight('#ffd6a0',.9,5,Math.PI/5,.7,1.8);
-  lamp.position.set(0,1.25,.65);lamp.target.position.set(0,0,0);group.add(lamp,lamp.target);
-  frames.push({
-    group,art,tex,index:i,title:captions[i%captions.length],
-    caption:'One little moment, kept forever.',
-    pos:new THREE.Vector3(pos[0],1.6,pos[2])
-  });
-}
-
-/* ---------------- SCENE ---------------- */
-
-function init() {
-  if(!window.THREE) {
-    $('loadText').textContent='The 3D engine did not load. Check your internet connection and try again.';
-    $('loading').classList.add('show');return false;
+function animate(){
+ raf=requestAnimationFrame(animate);
+ if(!scene||!renderer)return;
+ const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
+ const fwd=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-move.y;
+ const side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+move.x;
+ let dx=side,dz=fwd,len=Math.hypot(dx,dz);if(len>1){dx/=len;dz/=len}
+ const moving=len>.08&&!sitting;
+ if(!sitting){
+  player.position.x+=(Math.cos(lookYaw)*dx+Math.sin(lookYaw)*dz)*2.5*dt;
+  player.position.z+=(Math.sin(lookYaw)*dx-Math.cos(lookYaw)*dz)*2.5*dt;
+ }
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-7.9,7.9);
+ player.position.z=THREE.MathUtils.clamp(player.position.z,-18,7.8);
+ player.rotation.y=lookYaw+Math.PI;
+ const tx=player.position.x+.82+Math.sin(t*.55)*.12,tz=player.position.z+.12+Math.cos(t*.55)*.1;
+ partner.position.x+=(tx-partner.position.x)*Math.min(1,dt*2.1);
+ partner.position.z+=(tz-partner.position.z)*Math.min(1,dt*2.1);
+ partner.rotation.y=player.rotation.y;
+ [player,partner].forEach((p,i)=>{
+  const walk=i===0?moving:Math.abs(tx-p.position.x)+Math.abs(tz-p.position.z)>.08;
+  const desired=sitting?'sit':dancing?'dance':walk?'walk':'idle';
+  if(p.userData.isRigged){
+   if(p.userData.activeClipType!==desired&&!requestClip(p,desired)){
+    if(desired==='walk'&&!requestClip(p,'idle')){}
+   }
+   if(p.userData.mixer)p.userData.mixer.update(dt);
+  }else{
+   const phase=t*8+(p.userData.phase||0);
+   (p.userData.legs||[]).forEach((l,j)=>l.rotation.x=dancing?Math.sin(t*5+j*Math.PI)*.55:walk?Math.sin(phase+j*Math.PI)*.45:0);
+   (p.userData.arms||[]).forEach((a,j)=>{a.rotation.x=dancing?Math.sin(t*5+j*Math.PI+1)*.65:walk?Math.sin(phase+j*Math.PI+Math.PI)*.28:0});
   }
-
-  try {
-    scene=new THREE.Scene();
-    scene.background=new THREE.Color('#28221e');
-    scene.fog=new THREE.Fog('#28221e',27,52);
-    camera=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.1,100);
-
-    renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
-    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-    renderer.setSize(innerWidth,innerHeight);
-    renderer.shadowMap.enabled=true;
-    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-    renderer.outputEncoding=THREE.sRGBEncoding;
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure=.72;
-
-    clock=new THREE.Clock();
-    scene.add(new THREE.HemisphereLight('#d9c0a3','#302620',.48));
-    scene.add(new THREE.AmbientLight('#c8a98a',.18));
-
-    const key=new THREE.DirectionalLight('#eac7a0',.48);
-    key.position.set(-3,8,4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
-
-    /* Keep the original warm gallery layout. */
-    box(18,.28,28,0,-.16,-5,mat('#62554a'));
-    box(18,.22,28,0,5.25,-5,mat('#302822'));
-    box(18,5.35,.3,0,2.5,-19,mat('#51443a'));
-    box(.3,5.35,28,-9,2.5,-5,mat('#493d34'));
-    box(.3,5.35,28,9,2.5,-5,mat('#493d34'));
-    box(18,5.35,.3,0,2.5,9,mat('#51443a'));
-
-    const lineM=mat('#8b7865');
-    for(let x=-8;x<=8;x+=2) box(.018,.012,27,x,.002,-5,lineM);
-    for(let z=-18;z<=8;z+=2) box(17,.012,.018,0,.003,z,lineM);
-
-    for(const [x,z] of [[-5,-15],[0,-15],[5,-15],[-8,-9],[-8,-2],[-8,5],[8,-9],[8,-2],[8,5]]) {
-      const l=new THREE.PointLight('#e9b982',.42,6);
-      l.position.set(x,3.9,z);scene.add(l);
-    }
-
-    for(let i=0;i<5;i++) addFrame([-6.2+i*3.1,2.75,-18.78],0,i);
-    for(let i=0;i<4;i++) addFrame([-8.78,2.55,-14+i*6],Math.PI/2,i+5);
-    for(let i=0;i<4;i++) addFrame([8.78,2.55,-14+i*6],-Math.PI/2,i+9);
-
-    bench=new THREE.Group();bench.position.set(0,0,-8.5);scene.add(bench);
-    box(2.25,.13,.58,0,.63,0,mat('#7a5d43'),bench);
-    box(2.2,.1,.55,0,.74,0,mat('#c7b69e'),bench);
-    for(const x of [-.82,.82]) box(.12,.62,.12,x,.31,0,mat('#44372e'),bench);
-    for(const [x,z] of [[-3,-8],[3,-12]]) {
-      box(.7,.8,.7,x,.4,z,mat('#9c8b79'));
-      sphere(.17,1,1,1,x,.91,z,mat('#d7a2ac',.3,{emissive:'#4b1827',emissiveIntensity:.3}));
-    }
-
-    /* Placeholder avatars show immediately, then get replaced by GLB models. */
-    player=makePerson({top:'#8b6349',skin:'#b98065',hair:'#30221c',pants:'#574333',shoes:'#251d18'},-.42,1.8,'male');
-    partner=makePerson({top:'#d8c8b7',skin:'#d7a58d',hair:'#4a2c24',pants:'#35566b',shoes:'#c6b6a6'},.42,2.05,'female');
-
-    camera.position.set(0,3.35,9.0);
-    lookYaw=0;lookPitch=0;
-    loadOurCharacters();
-    return true;
-  } catch(err) {
-    $('loadText').textContent='Could not create the 3D scene on this device. Try refreshing or using a newer browser.';
-    $('loading').classList.add('show');console.error(err);return false;
-  }
+ });
+ if(sitting){
+  if(!player.userData.isRigged)player.position.y=-.48;
+  if(!partner.userData.isRigged)partner.position.y=-.48;
+ }else{
+  if(!player.userData.isRigged)player.position.y=0;
+  if(!partner.userData.isRigged)partner.position.y=0;
+ }
+ const dist=6.2,cx=player.position.x+Math.sin(lookYaw)*dist,cz=player.position.z+Math.cos(lookYaw)*dist;
+ camera.position.x+=(cx-camera.position.x)*Math.min(1,dt*3.5);
+ camera.position.y+=(3.25+lookPitch*1.5-camera.position.y)*Math.min(1,dt*3.5);
+ camera.position.z+=(cz-camera.position.z)*Math.min(1,dt*3.5);
+ camera.lookAt(player.position.x,1.12,player.position.z-1.8);
+ let nearest=null,nearDist=Infinity;
+ frames.forEach(f=>{const d=Math.hypot(player.position.x-f.pos.x,player.position.z-f.pos.z);if(d<nearDist){nearDist=d;nearest=f}});
+ activeFrame=nearDist<3.6?nearest:null;$('prompt').classList.toggle('show',!!activeFrame);
+ if(activeFrame)$('prompt').textContent='♡ Tap / press E · '+activeFrame.title;
+ renderer.render(scene,camera);
 }
-
-function start() {
-  if(started)return;
-  if(!renderer&&!init())return;
-  started=true;landing.classList.add('gone');hud.classList.add('on');
-  $('loading').classList.remove('show');
-  clock.start();cancelAnimationFrame(raf);animate();
+function openFrame(f){
+ if(!f)return;
+ const img=f.art.material.map?.image;
+ if(img&&img.toDataURL)$('modalImg').src=img.toDataURL();
+ else if(img?.src)$('modalImg').src=img.src;
+ $('modalTitle').textContent=f.title;$('modalCaption').textContent=f.caption;
+ $('replacePhoto').dataset.index=String(frames.indexOf(f));$('modal').classList.add('show');
 }
-
-/* ---------------- MOVEMENT + ANIMATION ---------------- */
-
-function animate() {
-  raf=requestAnimationFrame(animate);
-  if(!scene||!renderer)return;
-
-  const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
-  const fwd=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-move.y;
-  const side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+move.x;
-
-  let dx=side,dz=fwd,len=Math.hypot(dx,dz);
-  if(len>1){dx/=len;dz/=len}
-  const moving=len>.08&&!sitting,speed=2.5;
-
-  if(!sitting) {
-    player.position.x+=(Math.cos(lookYaw)*dx+Math.sin(lookYaw)*dz)*speed*dt;
-    player.position.z+=(Math.sin(lookYaw)*dx-Math.cos(lookYaw)*dz)*speed*dt;
-  }
-
-  player.position.x=THREE.MathUtils.clamp(player.position.x,-7.9,7.9);
-  player.position.z=THREE.MathUtils.clamp(player.position.z,-18,7.8);
-  player.rotation.y=lookYaw+Math.PI;
-
-  const tx=player.position.x+.82+Math.sin(t*.55)*.12;
-  const tz=player.position.z+.12+Math.cos(t*.55)*.10;
-  partner.position.x+=(tx-partner.position.x)*Math.min(1,dt*2.1);
-  partner.position.z+=(tz-partner.position.z)*Math.min(1,dt*2.1);
-  partner.rotation.y=player.rotation.y;
-
-  [player,partner].forEach((p,idx)=>{
-    const walk=idx===0?moving:Math.abs(tx-p.position.x)+Math.abs(tz-p.position.z)>.08;
-    const desired=sitting?'sit':dancing?'dance':walk?'walk':'idle';
-
-    if(p.userData.isRigged) {
-      if(p.userData.activeClipType!==desired) requestClip(p,desired);
-      if(p.userData.mixer) p.userData.mixer.update(dt);
-    } else {
-      const phase=t*8+(p.userData.phase||0);
-      (p.userData.legs||[]).forEach((l,i)=>{
-        l.rotation.x=dancing?Math.sin(t*5+i*Math.PI)*.55:walk?Math.sin(phase+i*Math.PI)*.45:Math.sin(t*1.2+i)*.015;
-      });
-      (p.userData.arms||[]).forEach((a,i)=>{
-        a.rotation.x=dancing?Math.sin(t*5+i*Math.PI+1)*.65:walk?Math.sin(phase+i*Math.PI+Math.PI)*.28:0;
-        a.rotation.z=dancing?Math.sin(t*4+i)*.35:(i===0?-.12:.12);
-      });
-    }
-  });
-
-  if(dancing&&!player.userData.isRigged&&!partner.userData.isRigged) {
-    player.rotation.y+=Math.sin(t*2)*.45;
-    partner.rotation.y+=Math.cos(t*2)*.45;
-  }
-
-  if(sitting) {
-    if(!player.userData.isRigged)player.position.y=-.48;
-    if(!partner.userData.isRigged)partner.position.y=-.48;
-    player.rotation.y=Math.PI;partner.rotation.y=Math.PI;
-  } else {
-    if(!player.userData.isRigged)player.position.y=0;
-    if(!partner.userData.isRigged)partner.position.y=0;
-  }
-
-  const followDist=6.2;
-  const camX=player.position.x+Math.sin(lookYaw)*followDist;
-  const camZ=player.position.z+Math.cos(lookYaw)*followDist;
-  camera.position.x+=(camX-camera.position.x)*Math.min(1,dt*3.5);
-  camera.position.y+=(3.25+lookPitch*1.5-camera.position.y)*Math.min(1,dt*3.5);
-  camera.position.z+=(camZ-camera.position.z)*Math.min(1,dt*3.5);
-  camera.lookAt(player.position.x,1.12,player.position.z-1.8);
-  camera.rotation.x+=lookPitch*.12;
-
-  let nearest=null,dist=999;
-  for(const fr of frames) {
-    const d=Math.hypot(player.position.x-fr.pos.x,player.position.z-fr.pos.z);
-    if(d<dist){dist=d;nearest=fr}
-  }
-  activeFrame=dist<3.6?nearest:null;
-  promptEl.classList.toggle('show',!!activeFrame);
-  if(activeFrame)promptEl.textContent='♡ Tap / press E · '+activeFrame.title;
-  renderer.render(scene,camera);
-}
-
-/* ---------------- PHOTO INTERACTION ---------------- */
-
-function openFrame(f) {
-  if(!f)return;
-  const im=f.art.material.map?.image;
-  $('modalImg').src=im&&im.toDataURL?im.toDataURL():(im?.src||'');
-  $('modalTitle').textContent=f.title;
-  $('modalCaption').textContent=f.caption;
-  $('replacePhoto').dataset.index=String(frames.indexOf(f));
-  modal.classList.add('show');
-}
-
-let pointerStart=null;
-canvas.addEventListener('pointerdown',e=>{
-  pointerStart={x:e.clientX,y:e.clientY,id:e.pointerId};
-  if(e.pointerType==='mouse')canvas.setPointerCapture(e.pointerId);
-});
-canvas.addEventListener('pointermove',e=>{
-  if(!pointerStart||pointerStart.id!==e.pointerId)return;
-  const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
-  if(e.pointerType==='mouse'&&e.buttons) {
-    lookYaw-=dx*.004;
-    lookPitch=THREE.MathUtils.clamp(lookPitch-dy*.002,-.25,.45);
-    pointerStart={x:e.clientX,y:e.clientY,id:e.pointerId};
-  }
-});
-canvas.addEventListener('pointerup',e=>{
-  if(!pointerStart)return;
-  const d=Math.hypot(e.clientX-pointerStart.x,e.clientY-pointerStart.y);
-  pointerStart=null;
-  if(d<12&&activeFrame)openFrame(activeFrame);
-});
-
 window.addEventListener('keydown',e=>{
-  keys[e.code]=true;
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
-  if(e.code==='KeyE'&&activeFrame)openFrame(activeFrame);
-  if(e.code==='Escape')modal.classList.remove('show');
+ keys[e.code]=true;
+ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
+ if(e.code==='KeyE'&&activeFrame)openFrame(activeFrame);
+ if(e.code==='Escape')$('modal').classList.remove('show');
 });
 window.addEventListener('keyup',e=>keys[e.code]=false);
-
-/* ---------------- MOBILE JOYSTICK ---------------- */
+let mouseLook=null;
+canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')mouseLook={x:e.clientX,y:e.clientY};});
+canvas.addEventListener('pointermove',e=>{
+ if(mouseLook&&e.pointerType==='mouse'&&e.buttons){lookYaw-=(e.clientX-mouseLook.x)*.004;lookPitch=THREE.MathUtils.clamp(lookPitch-(e.clientY-mouseLook.y)*.002,-.25,.45);mouseLook={x:e.clientX,y:e.clientY}}
+});
+canvas.addEventListener('pointerup',()=>mouseLook=null);
+canvas.addEventListener('click',()=>{if(activeFrame)openFrame(activeFrame)});
 
 const joy=$('joystick'),knob=$('joyknob');
-let joyId=null;
-
-function joyMove(e) {
-  const r=joy.getBoundingClientRect(),x0=r.left+r.width/2,y0=r.top+r.height/2;
-  let x=(e.clientX-x0)/42,y=(e.clientY-y0)/42,l=Math.hypot(x,y);
-  if(l>1){x/=l;y/=l}
-  move={x,y};
-  knob.style.left=`${50+x*37}%`;
-  knob.style.top=`${50+y*37}%`;
+function joyMove(e){
+ const r=joy.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)/42,y=(e.clientY-r.top-r.height/2)/42,l=Math.hypot(x,y);
+ move={x:l>1?x/l:x,y:l>1?y/l:y};
+ knob.style.left=(50+move.x*37)+'%';knob.style.top=(50+move.y*37)+'%';
 }
-function joyEnd() {
-  joyId=null;move={x:0,y:0};knob.style.left='50%';knob.style.top='50%';
-}
-joy.addEventListener('pointerdown',e=>{
-  e.preventDefault();joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e);
-});
+function joyEnd(){joyId=null;move={x:0,y:0};knob.style.left='50%';knob.style.top='50%'}
+joy.addEventListener('pointerdown',e=>{e.preventDefault();joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e)});
 joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});
-joy.addEventListener('pointerup',joyEnd);
-joy.addEventListener('pointercancel',joyEnd);
-
-const lookpad=$('lookpad');
-lookpad.addEventListener('pointerdown',e=>{
-  lastTouch={x:e.clientX,y:e.clientY,id:e.pointerId};lookpad.setPointerCapture(e.pointerId);
+joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+$('lookpad').addEventListener('pointerdown',e=>{lastLook={x:e.clientX,y:e.clientY,id:e.pointerId};e.currentTarget.setPointerCapture(e.pointerId)});
+$('lookpad').addEventListener('pointermove',e=>{
+ if(!lastLook||lastLook.id!==e.pointerId)return;
+ lookYaw-=(e.clientX-lastLook.x)*.009;lookPitch=THREE.MathUtils.clamp(lookPitch-(e.clientY-lastLook.y)*.004,-.3,.45);
+ lastLook={x:e.clientX,y:e.clientY,id:e.pointerId};
 });
-lookpad.addEventListener('pointermove',e=>{
-  if(!lastTouch||lastTouch.id!==e.pointerId)return;
-  const dx=e.clientX-lastTouch.x,dy=e.clientY-lastTouch.y;
-  lookYaw-=dx*.009;
-  lookPitch=THREE.MathUtils.clamp(lookPitch-dy*.004,-.3,.45);
-  lastTouch={x:e.clientX,y:e.clientY,id:e.pointerId};
-});
-lookpad.addEventListener('pointerup',()=>lastTouch=null);
-lookpad.addEventListener('pointercancel',()=>lastTouch=null);
+$('lookpad').addEventListener('pointerup',()=>lastLook=null);
+$('lookpad').addEventListener('pointercancel',()=>lastLook=null);
 
-/* ---------------- PHOTO UPLOAD ---------------- */
-
-function applyPhoto(file,index) {
-  if(!file||!file.type.startsWith('image/'))return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const img=new Image();
-    img.onload=()=>{
-      const tex=texture(img),fr=frames[index%frames.length];
-      fr.art.material.map=tex;fr.art.material.needsUpdate=true;
-      fr.title=file.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ')||captions[index%captions.length];
-      fr.caption='A memory we wanted to keep close.';
-      fr.tex=tex;
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
+function applyPhoto(file,index){
+ if(!file||!file.type.startsWith('image/'))return;
+ const reader=new FileReader();reader.onload=e=>{
+  const img=new Image();img.onload=()=>{
+   const tex=new THREE.Texture(img);tex.needsUpdate=true;tex.encoding=THREE.sRGBEncoding;
+   const f=frames[index%frames.length];f.art.material.map=tex;f.art.material.needsUpdate=true;f.tex=tex;
+   f.title=file.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ')||captions[index%captions.length];
+   f.caption='A memory we wanted to keep close.';
+  };img.src=e.target.result;
+ };reader.readAsDataURL(file);
 }
+$('uploadBtn').onclick=()=>$('photos').click();
+$('photos').addEventListener('change',e=>{Array.from(e.target.files).forEach((f,i)=>applyPhoto(f,i));e.target.value=''});
+$('replacePhoto').addEventListener('change',e=>{if(e.target.files[0])applyPhoto(e.target.files[0],Number(e.target.dataset.index)||0);e.target.value=''});
+$('close').onclick=()=>$('modal').classList.remove('show');
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('show')});
 
-$('uploadBtn').addEventListener('click',()=>$('photos').click());
-$('photos').addEventListener('change',e=>{
-  Array.from(e.target.files).forEach((f,i)=>applyPhoto(f,i));
-  e.target.value='';
-});
-$('replacePhoto').addEventListener('change',e=>{
-  const f=e.target.files[0];
-  if(f)applyPhoto(f,Number(e.target.dataset.index)||0);
-  e.target.value='';
-});
-$('close').addEventListener('click',()=>modal.classList.remove('show'));
-modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
-
-/* ---------------- DANCE AND SIT CONTROLS ---------------- */
-
-$('dance').addEventListener('click',()=>{
-  dancing=!dancing;
-  $('dance').textContent=dancing?'♡ Stop dancing':'♡ Dance together';
-});
-$('sit').addEventListener('click',()=>{
-  sitting=!sitting;
-  $('sit').textContent=sitting?'▰ Stand up':'▰ Sit / stand';
-  if(sitting) {
-    player.position.x=0;player.position.z=-8.5;
-    partner.position.x=.65;partner.position.z=-8.5;
-    dancing=false;
-  }
-});
-
-/* ---------------- BACKGROUND MUSIC ---------------- */
-
+$('dance').onclick=()=>{dancing=!dancing;$('dance').textContent=dancing?'♡ Stop dancing':'♡ Dance together'};
+$('sit').onclick=()=>{
+ sitting=!sitting;$('sit').textContent=sitting?'▰ Stand up':'▰ Sit / stand';
+ if(sitting){player.position.x=0;player.position.z=-8.5;partner.position.x=.65;partner.position.z=-8.5;dancing=false}
+};
 const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
-
-function tone(freq,when,dur) {
-  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-  o.type='sine';o.frequency.value=freq;
-  g.gain.setValueAtTime(.0001,when);
-  g.gain.exponentialRampToValueAtTime(.018,when+.28);
-  g.gain.exponentialRampToValueAtTime(.0001,when+dur);
-  o.connect(g);g.connect(master);o.start(when);o.stop(when+dur+.04);
+function tone(freq,when,dur){
+ const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=freq;
+ g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(.018,when+.28);g.gain.exponentialRampToValueAtTime(.0001,when+dur);
+ o.connect(g);g.connect(master);o.start(when);o.stop(when+dur+.04);
 }
-function musicLoop() {
-  if(!playing)return;
-  const n=audioCtx.currentTime;
-  tone(notes[step%8],n,2.1);
-  if(step%4===0)tone(notes[(step+2)%8]/2,n,2.7);
-  step++;musicTimer=setTimeout(musicLoop,1000);
-}
-
-$('music').addEventListener('click',async()=>{
-  if(!audioCtx) {
-    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-    master=audioCtx.createGain();master.gain.value=.75;master.connect(audioCtx.destination);
-  }
-  if(!playing) {
-    await audioCtx.resume();playing=true;$('music').textContent='♫ Music: on';musicLoop();
-  } else {
-    playing=false;clearTimeout(musicTimer);
-    master.gain.setTargetAtTime(.0001,audioCtx.currentTime,.12);
-    setTimeout(()=>{if(!playing)master.gain.value=.75},500);
-    $('music').textContent='♫ Music: off';
-  }
-});
-
-/* ---------------- START, HOME, RESIZE ---------------- */
-
-$('enter').addEventListener('click',start);
-$('retry').addEventListener('click',()=>{
-  $('loading').classList.remove('show');
-  start();
-});
-$('exit').addEventListener('click',()=>{
-  started=false;cancelAnimationFrame(raf);
-  hud.classList.remove('on');landing.classList.remove('gone');
-  modal.classList.remove('show');dancing=false;sitting=false;
-});
-
+function musicLoop(){if(!playing)return;const n=audioCtx.currentTime;tone(notes[noteIndex%8],n,2.1);if(noteIndex%4===0)tone(notes[(noteIndex+2)%8]/2,n,2.7);noteIndex++;musicTimer=setTimeout(musicLoop,1000)}
+$('music').onclick=async()=>{
+ if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();master=audioCtx.createGain();master.gain.value=.75;master.connect(audioCtx.destination)}
+ if(!playing){await audioCtx.resume();playing=true;$('music').textContent='♫ Music: on';musicLoop()}
+ else{playing=false;clearTimeout(musicTimer);master.gain.setTargetAtTime(.0001,audioCtx.currentTime,.12);$('music').textContent='♫ Music: off';setTimeout(()=>{if(!playing)master.gain.value=.75},500)}
+};
+$('enter').onclick=start;
+$('exit').onclick=()=>{started=false;cancelAnimationFrame(raf);$('hud').classList.remove('on');$('landing').classList.remove('gone');$('modal').classList.remove('show')};
 window.addEventListener('resize',()=>{
-  if(renderer&&camera) {
-    camera.aspect=innerWidth/innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth,innerHeight);
-  }
+ if(renderer&&camera){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
 });
 })();
 </script>
 </body>
 </html>
-
