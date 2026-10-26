@@ -171,10 +171,20 @@ function loadRiggedCharacter(url,oldCharacter,label){
     let bounds=new THREE.Box3().setFromObject(model);
     let size=bounds.getSize(new THREE.Vector3());
     if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid model height');
-    model.scale.multiplyScalar(1.7/size.y);model.updateMatrixWorld(true);
-    bounds.setFromObject(model);
-    const center=bounds.getCenter(new THREE.Vector3());
-    model.position.x-=center.x;model.position.z-=center.z;model.position.y-=bounds.min.y;
+    
+model.scale.multiplyScalar(1.7 / size.y);
+model.position.set(0, 0, 0);
+model.updateMatrixWorld(true);
+
+const fittedBounds = new THREE.Box3().setFromObject(model);
+const center = fittedBounds.getCenter(new THREE.Vector3());
+
+model.position.x -= center.x;
+model.position.z -= center.z;
+model.position.y -= fittedBounds.min.y;
+
+model.updateMatrixWorld(true);
+
     const wrapper=new THREE.Group();
     wrapper.position.copy(oldCharacter.position);wrapper.rotation.copy(oldCharacter.rotation);wrapper.add(model);
     wrapper.userData.isRigged=true;wrapper.userData.label=label;
