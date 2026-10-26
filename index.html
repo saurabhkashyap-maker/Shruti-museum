@@ -3,466 +3,666 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Our Museum ♥</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Museum ❤️</title>
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#211915;color:#eee0ce;font-family:'DM Sans',sans-serif}
-#world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-header{position:fixed;z-index:3;top:0;left:0;right:0;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(#17110fe8,transparent);pointer-events:none}
-.brand{font:italic 30px 'Playfair Display',serif;white-space:nowrap}
-.brand span{color:#d99aaa}
-.buttons{display:flex;gap:8px;pointer-events:auto}
-button{font:inherit;cursor:pointer}
-.pill{border:1px solid #c7aa8c77;border-radius:40px;padding:11px 15px;color:#f1e5d7;background:#211b18dd;font-size:12px}
-.help{position:fixed;z-index:2;top:78px;left:24px;font-size:11px;line-height:1.7;color:#d5c1ab;text-shadow:0 2px 5px #000;pointer-events:none}
-#caption{position:fixed;bottom:15px;left:0;right:0;text-align:center;letter-spacing:2px;text-transform:uppercase;font-size:9px;color:#d8c0a4;pointer-events:none}
-#prompt{position:fixed;bottom:20%;left:50%;transform:translateX(-50%);padding:11px 16px;background:#1b1412ed;border:1px solid #bda080;border-radius:4px;font:italic 15px 'Playfair Display',serif;display:none;white-space:nowrap}
-#joy{position:fixed;z-index:3;left:22px;bottom:28px;width:112px;height:112px;border:1px solid #f0dfc777;border-radius:50%;background:#19141166;touch-action:none;display:none}
-#knob{position:absolute;left:50%;top:50%;width:40px;height:40px;transform:translate(-50%,-50%);border:1px solid #f0dfc7;background:#d7c5ad55;border-radius:50%}
-#look{position:fixed;z-index:1;right:0;bottom:0;width:48%;height:60%;touch-action:none}
-#modal{position:fixed;z-index:5;inset:0;background:#090706ed;display:none;align-items:center;justify-content:center;padding:20px}
-#modal.show{display:flex}
-.panel{width:min(500px,94vw);padding:16px;background:#211915;border:1px solid #9e8266;text-align:center}
-#memory{display:block;width:100%;height:min(55vh,450px);object-fit:contain}
-#title{font:italic 26px 'Playfair Display',serif;margin:15px 0 6px}
-#note{color:#c5b4a3;font-size:12px;margin-bottom:15px}
-#landing{position:fixed;z-index:6;inset:0;background:radial-gradient(ellipse at center,#493328,#241916 55%,#100d0c);display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;transition:opacity .7s}
-#landing.hide{opacity:0;pointer-events:none}
-#landing h1{font:400 clamp(62px,12vw,105px)/.95 'Playfair Display',serif;margin:22px 0}
-#landing h1 em{color:#d99aaa}
-#landing p{font-size:13px;line-height:1.9;color:#c8b6a5}
-#enter{margin-top:18px;background:#e6d7c5;color:#211713;border:0;border-radius:40px;padding:15px 25px;letter-spacing:1px}
-#toast{position:fixed;z-index:9;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:#241916;border:1px solid #bda080;display:none;max-width:90vw}
-@media(max-width:700px){
- header{padding:14px 10px;align-items:flex-start}
- .brand{font-size:20px;position:absolute;top:70px;left:14px}
- .buttons{width:100%;justify-content:flex-end;gap:4px}
- .pill{padding:9px 10px;font-size:10px}
- .help{top:112px;left:14px;font-size:10px}
- #joy{display:block;width:105px;height:105px;bottom:24px;left:16px}
- #look{display:block}
- #caption{bottom:12px;font-size:7px;max-width:65%;left:35%}
- #prompt{bottom:22%;font-size:12px}
+body{margin:0;overflow:hidden;background:#100d12;color:#fff;font-family:Arial,sans-serif}
+button{border:1px solid #ffffff30;background:#29202b;color:white;padding:11px 15px;border-radius:12px;cursor:pointer}
+button:hover,button.active{background:#a65372;border-color:#f5b4ce}
+#app{position:fixed;inset:0}
+#topbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:linear-gradient(#100d12dd,transparent);z-index:5;gap:10px}
+.brand{font-size:20px;font-weight:bold;letter-spacing:1px}
+.brand span{color:#f2a8c3}
+#status{font-size:12px;color:#d9c8d5;margin-top:5px}
+#controls{position:fixed;left:16px;bottom:18px;z-index:5;display:flex;flex-wrap:wrap;gap:8px;max-width:70%}
+#actions{position:fixed;right:16px;bottom:18px;z-index:5;display:flex;flex-direction:column;gap:8px}
+#hint{position:fixed;top:95px;left:50%;transform:translateX(-50%);background:#18121bcc;border:1px solid #ffffff20;border-radius:14px;padding:10px 14px;color:#e8dce5;font-size:12px;text-align:center;max-width:90%;z-index:3}
+#upload{display:none}
+#loading{position:fixed;inset:0;z-index:10;background:#100d12;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;transition:opacity .7s}
+#loading h1{font-size:30px;letter-spacing:2px;margin:0}
+#loading p{color:#d4bdcc;font-size:13px}
+.heart{font-size:44px;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.2)}}
+#crosshair{position:fixed;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:#fff7;pointer-events:none}
+#mobileHelp{position:fixed;bottom:100px;left:16px;font-size:11px;color:#d6c4d0;z-index:4}
+@media(max-width:600px){
+ .brand{font-size:16px}
+ #topbar{padding:12px}
+ #controls{max-width:62%;left:9px;bottom:12px}
+ #actions{right:9px;bottom:12px}
+ button{padding:10px;font-size:12px}
+ #hint{top:80px}
 }
 </style>
 </head>
 <body>
-<canvas id="world"></canvas>
+<div id="app"></div>
 
-<header>
-  <div class="brand">Our Museum <span>♥</span></div>
-  <div class="buttons">
-    <button class="pill" id="music">♫ Music: off</button>
-    <button class="pill" id="upload">＋ Photos</button>
-    <button class="pill" id="home">← Home</button>
-    <input id="files" type="file" accept="image/*" multiple hidden>
+<div id="loading">
+  <div class="heart">❤️</div>
+  <h1>OUR MUSEUM</h1>
+  <p>Preparing your little world...</p>
+</div>
+
+<div id="topbar">
+  <div>
+    <div class="brand">OUR <span>MUSEUM</span> ♡</div>
+    <div id="status">Loading your characters...</div>
   </div>
-</header>
-
-<div class="help">WASD / arrow keys to walk · drag to look<br>Move close to a frame and press E / tap it</div>
-<div id="prompt">♡ Open memory</div>
-<div id="joy"><div id="knob"></div></div>
-<div id="look"></div>
-<div id="caption">A little walk through everything I love about us</div>
-
-<div id="landing">
- <div>
-  <div style="letter-spacing:4px;font-size:10px;color:#c6b19b">A LITTLE PLACE MADE JUST FOR US</div>
-  <h1>Our<br><em>Museum.</em></h1>
-  <p>Walk with me through our little universe.<br>Every wall holds a memory. Every step is ours.</p>
-  <button id="enter">ENTER OUR WORLD ↗</button>
-  <p style="position:absolute;bottom:10px;left:0;right:0;font-size:9px;letter-spacing:2px">A PRIVATE UNIVERSE FOR TWO ♥</p>
- </div>
+  <div style="display:flex;gap:8px">
+    <button id="musicBtn">♫ Music</button>
+    <button id="photoBtn">＋ Photos</button>
+    <input id="upload" type="file" accept="image/*" multiple>
+  </div>
 </div>
 
-<div id="modal">
- <div class="panel">
-  <img id="memory" alt="Our memory">
-  <div id="title">The beginning</div>
-  <div id="note">One little moment, kept forever.</div>
-  <button class="pill" id="replace">Replace photo</button>
-  <input id="replaceFile" type="file" accept="image/*" hidden>
-  <button class="pill" id="close">Close ✕</button>
- </div>
-</div>
-<div id="toast">3D scene could not load. Check your internet connection and reload.</div>
+<div id="hint">WASD / Arrow keys to walk · Drag to look around</div>
+<div id="crosshair"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div id="controls">
+  <button data-move="forward">↑</button>
+  <button data-move="left">←</button>
+  <button data-move="back">↓</button>
+  <button data-move="right">→</button>
+</div>
+
+<div id="actions">
+  <button id="danceBtn">💃 Dance</button>
+  <button id="sitBtn">🪑 Sit</button>
+  <button id="standBtn">🚶 Stand / Walk</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
 <script>
-(()=>{
+(() => {
 'use strict';
-const $=id=>document.getElementById(id);
-const canvas=$('world');
-if(!window.THREE){$('toast').style.display='block';return}
 
-let scene,camera,renderer,clock,player,partner;
-let running=false,raf=0,yaw=0,pitch=0;
-let keys={},moveX=0,moveY=0,activeFrame=null;
-let audio=null,musicOn=false,musicTimer=null,musicStep=0;
-let dancing=false,sitting=false,selectedFrame=null;
-const frames=[];
-const names=['The beginning','My favourite place','Always us','Little adventures','You feel like home','Our forever','The little things','Just us'];
+/* -------------------------------------------------------
+   MODEL FILES
+   Keep these paths exactly as shown in your folder:
+   Our Museum/
+     index.html
+     models/man.glb
+     models/woman.glb
+-------------------------------------------------------- */
 
-const material=(color,roughness=.85,extra={})=>
- new THREE.MeshStandardMaterial({color,roughness,...extra});
+const MODEL_MAN = './models/man.glb';
+const MODEL_WOMAN = './models/woman.glb';
 
-function cube(parent,w,h,d,x,y,z,mat){
- const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
- o.position.set(x,y,z);
- o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;
-}
-function ball(parent,r,x,y,z,mat,sx=1,sy=1,sz=1){
- const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),mat);
- o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;parent.add(o);return o;
-}
-function cylinder(parent,r1,r2,h,x,y,z,mat){
- const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,12),mat);
- o.position.set(x,y,z);o.castShadow=true;parent.add(o);return o;
+const app = document.getElementById('app');
+const statusEl = document.getElementById('status');
+const loadingEl = document.getElementById('loading');
+
+if (!window.THREE || !THREE.GLTFLoader) {
+  statusEl.textContent = 'Could not load Three.js. Check your internet connection.';
+  loadingEl.querySelector('p').textContent = 'Please reload the page when online.';
+  return;
 }
 
-function makeAvatar(female,x,z){
- const g=new THREE.Group();g.position.set(x,0,z);
- const skin=material(female?'#c58f76':'#b47d61');
- const hair=material(female?'#3a211b':'#29201c');
- const shirt=material(female?'#d8c9b5':'#8b6044');
- const pants=material(female?'#344d61':'#594333');
- const shoes=material(female?'#b6a38e':'#30251e');
- const pivots={legs:[],arms:[]};
+/* ---------------- SCENE ---------------- */
 
- // Natural human proportions: small head, torso, arms and legs.
- cube(g,.39,.48,.23,0,1.18,0,shirt);
- cube(g,.34,.22,.22,0,.82,0,pants);
- cylinder(g,.07,.075,.14,0,1.49,0,skin);
- ball(g,.125,0,1.65,0,skin,1,.98,.92);
- ball(g,.13,0,1.72,-.025,hair,1,.58,1);
- if(female){
-  ball(g,.105,0,1.52,-.075,hair,.8,1.25,.9);
-  ball(g,.055,-.10,1.54,-.02,hair,.9,1.5,.9);
-  ball(g,.055,.10,1.54,-.02,hair,.9,1.5,.9);
- }
- else{
-  ball(g,.10,0,1.75,.005,hair,1,.43,.9);
- }
- for(const s of [-1,1]){
-  const arm=new THREE.Group();arm.position.set(s*.245,1.35,0);g.add(arm);
-  cube(arm,.115,.28,.13,0,-.14,0,shirt);
-  cube(arm,.09,.23,.10,s*.012,-.38,.015,skin);
-  pivots.arms.push(arm);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x171019);
+scene.fog = new THREE.Fog(0x171019, 16, 48);
 
-  const leg=new THREE.Group();leg.position.set(s*.105,.78,0);g.add(leg);
-  cube(leg,.145,.40,.16,0,-.20,0,pants);
-  cube(leg,.15,.10,.25,0,-.43,.045,shoes);
-  pivots.legs.push(leg);
- }
- g.userData=pivots;scene.add(g);return g;
+const camera = new THREE.PerspectiveCamera(
+  65, window.innerWidth / window.innerHeight, 0.1, 120
+);
+camera.position.set(0, 2.4, 5);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+app.appendChild(renderer.domElement);
+
+/* ---------------- LIGHTS ---------------- */
+
+scene.add(new THREE.HemisphereLight(0xffe9f1, 0x34243c, 1.25));
+
+const mainLight = new THREE.PointLight(0xffd5ac, 2.1, 28);
+mainLight.position.set(0, 5.5, 0);
+scene.add(mainLight);
+
+const warmLight = new THREE.PointLight(0xff8eaf, 1.15, 18);
+warmLight.position.set(-4, 3, -5);
+scene.add(warmLight);
+
+const softLight = new THREE.PointLight(0xb8a1ff, 0.8, 18);
+softLight.position.set(5, 3, 3);
+scene.add(softLight);
+
+/* ---------------- MATERIAL HELPERS ---------------- */
+
+function material(color, roughness=0.85, metalness=0) {
+  return new THREE.MeshStandardMaterial({ color, roughness, metalness });
 }
 
-function artTexture(i){
- const c=document.createElement('canvas');c.width=400;c.height=520;
- const ctx=c.getContext('2d');
- const palettes=[
-  ['#42342f','#b99077'],['#493b35','#d2b69b'],
-  ['#38353e','#ad929c'],['#39443b','#a7ad91'],
-  ['#513832','#c49a8c'],['#343b45','#9ca6ad']
- ];
- const p=palettes[i%palettes.length];
- const gr=ctx.createLinearGradient(0,0,400,520);
- gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);
- ctx.fillStyle=gr;ctx.fillRect(0,0,400,520);
- ctx.fillStyle='#f4e8d6';ctx.globalAlpha=.13;
- ctx.beginPath();ctx.arc(305,110,76,0,Math.PI*2);ctx.fill();
- ctx.globalAlpha=.2;ctx.beginPath();ctx.moveTo(0,380);
- ctx.quadraticCurveTo(120,280,220,395);
- ctx.quadraticCurveTo(310,470,400,350);
- ctx.lineTo(400,520);ctx.lineTo(0,520);ctx.fill();ctx.globalAlpha=1;
- ctx.fillStyle='#f7e9d9';ctx.textAlign='center';
- ctx.font='italic 34px Georgia';
- ctx.fillText('Memory '+['I','II','III','IV','V','VI','VII','VIII'][i%8],200,255);
- ctx.font='11px sans-serif';ctx.fillText('ADD YOUR PHOTO',200,290);
- ctx.font='30px Georgia';ctx.fillText('♥',200,455);
- return c;
-}
-function addFrame(x,y,z,rotation,i){
- const group=new THREE.Group();group.position.set(x,y,z);group.rotation.y=rotation;scene.add(group);
- cube(group,1.22,1.57,.10,0,0,0,material('#17120f'));
- cube(group,1.14,1.49,.045,0,0,.065,material('#b59a79'));
- const img=artTexture(i);
- const tex=new THREE.CanvasTexture(img);tex.encoding=THREE.sRGBEncoding;
- const art=new THREE.Mesh(new THREE.PlaneGeometry(1.04,1.38),
-  new THREE.MeshBasicMaterial({map:tex}));
- art.position.z=.095;group.add(art);
- frames.push({group,art,tex,img,index:i,title:names[i%names.length],caption:'A memory we wanted to keep close.',x,z});
- // Soft, focused wall light; no giant bright lamps.
- const light=new THREE.SpotLight('#ffd09a',1.0,4.8,.62,.7,1.6);
- light.position.set(0,1.15,.55);light.target.position.set(0,0,0);
- group.add(light,light.target);
+function addBox(w,h,d,x,y,z,mat) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  mesh.position.set(x,y,z);
+  scene.add(mesh);
+  return mesh;
 }
 
-function init(){
- scene=new THREE.Scene();
- scene.background=new THREE.Color('#211914');
- scene.fog=new THREE.Fog('#211914',24,43);
+/* ---------------- MUSEUM ROOM ---------------- */
 
- camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,.1,90);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
- renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
- renderer.setSize(innerWidth,innerHeight);
- renderer.outputEncoding=THREE.sRGBEncoding;
- renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=.78;
- renderer.shadowMap.enabled=true;
- renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const floorMat = material(0x302531);
+const wallMat = material(0x493644);
+const trimMat = material(0x9a6b73,0.55,0.2);
 
- scene.add(new THREE.HemisphereLight('#c6aa8d','#241b16',.65));
- scene.add(new THREE.AmbientLight('#b18a68',.20));
- const key=new THREE.DirectionalLight('#e2bd91',.65);
- key.position.set(-4,8,5);key.castShadow=true;
- key.shadow.mapSize.set(1024,1024);scene.add(key);
+addBox(22,0.35,28,0,-0.2,-5,floorMat);
+addBox(22,8,0.35,0,3.8,-18,wallMat);
+addBox(0.35,8,28,-11,3.8,-5,wallMat);
+addBox(0.35,8,28,11,3.8,-5,wallMat);
 
- // Museum shell.
- cube(scene,18,.25,28,0,-.15,-5,material('#766656'));
- cube(scene,18,.22,28,0,5.15,-5,material('#30251f'));
- cube(scene,18,5.25,.28,0,2.5,-19,material('#514035'));
- cube(scene,.28,5.25,28,-9,2.5,-5,material('#493a31'));
- cube(scene,.28,5.25,28,9,2.5,-5,material('#493a31'));
- cube(scene,18,5.25,.28,0,2.5,9,material('#493a31'));
+/* Wall panels and decorative trim */
+for (let x=-9; x<=9; x+=3) {
+  addBox(0.055,7.5,0.08,x,3.6,-17.78,trimMat);
+}
+addBox(21.7,0.14,0.16,0,0.1,-17.7,trimMat);
+addBox(21.7,0.14,0.16,0,6.9,-17.7,trimMat);
 
- // Floor seams.
- const seam=material('#9b8169');
- for(let x=-8;x<=8;x+=2)cube(scene,.012,.006,27,x,.002,-5,seam);
- for(let z=-18;z<=8;z+=2)cube(scene,17,.006,.012,0,.003,z,seam);
-
- // Warm pools of light, controlled to prevent overexposure.
- for(const [x,z] of [[-5,-15],[0,-15],[5,-15],[-8,-9],[-8,-2],[8,-9],[8,-2]]){
-  const l=new THREE.PointLight('#d6a776',.48,5.5,2);
-  l.position.set(x,3.7,z);scene.add(l);
- }
-
- for(let i=0;i<5;i++)addFrame(-6.2+i*3.1,2.65,-18.78,0,i);
- for(let i=0;i<4;i++)addFrame(-8.78,2.55,-14+i*6,Math.PI/2,i+5);
- for(let i=0;i<4;i++)addFrame(8.78,2.55,-14+i*6,-Math.PI/2,i+9);
-
- // Bench in the central gallery.
- const bench=new THREE.Group();bench.position.set(0,0,-8.4);scene.add(bench);
- cube(bench,2.2,.12,.55,0,.62,0,material('#a58b6e'));
- cube(bench,2.05,.09,.48,0,.72,0,material('#c1aa8d'));
- for(const x of [-.8,.8])cube(bench,.11,.6,.11,x,.3,0,material('#403129'));
-
- // Small plants, not oversized spheres.
- for(const x of [-7.3,7.3]){
-  cube(scene,.55,.65,.55,x,.32,-8,material('#30271f'));
-  const plant=material('#43513a');
-  cylinder(scene,.025,.035,1.1,x,1.15,-8,plant);
-  for(let i=0;i<5;i++)ball(scene,.12,x+(i-2)*.08,1.35+(i%2)*.12,-8,plant,1.6,.55,.7);
- }
-
- player=makeAvatar(false,-.48,1.2);
- partner=makeAvatar(true,.48,1.35);
- camera.position.set(0,2.8,7.8);
- clock=new THREE.Clock();
+for (let x=-9; x<=9; x+=3) {
+  addBox(0.08,0.1,27,x,0.02,-5,trimMat);
 }
 
-function start(){
- if(running)return;
- try{if(!scene)init()}catch(e){$('toast').style.display='block';console.error(e);return}
- running=true;$('landing').classList.add('hide');
- cancelAnimationFrame(raf);clock.start();animate();
+/* Glowing ceiling fixtures */
+for (let x=-6; x<=6; x+=4) {
+  const lamp = new THREE.Mesh(
+    new THREE.BoxGeometry(1.8,0.08,0.45),
+    new THREE.MeshBasicMaterial({color:0xffdfbd})
+  );
+  lamp.position.set(x,7.45,-5);
+  scene.add(lamp);
+
+  const glow = new THREE.PointLight(0xffd6b0,0.65,9);
+  glow.position.set(x,6.9,-5);
+  scene.add(glow);
 }
-function animate(){
- if(!running)return;
- raf=requestAnimationFrame(animate);
- const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
- let forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-moveY;
- let side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+moveX;
- const len=Math.hypot(forward,side)||1;
- if(len>1){forward/=len;side/=len}
- const walking=Math.abs(forward)+Math.abs(side)>.08&&!sitting;
- if(!sitting){
-  player.position.x+=(Math.cos(yaw)*side+Math.sin(yaw)*forward)*2.0*dt;
-  player.position.z+=(Math.sin(yaw)*side-Math.cos(yaw)*forward)*2.0*dt;
- }
- player.position.x=THREE.MathUtils.clamp(player.position.x,-7.8,7.8);
- player.position.z=THREE.MathUtils.clamp(player.position.z,-17.8,7.5);
- player.rotation.y=yaw+Math.PI;
 
- const targetX=player.position.x+.85;
- const targetZ=player.position.z+.2;
- partner.position.x+=(targetX-partner.position.x)*Math.min(1,dt*2.4);
- partner.position.z+=(targetZ-partner.position.z)*Math.min(1,dt*2.4);
- partner.rotation.y=player.rotation.y;
+/* ---------------- PHOTO FRAMES ---------------- */
 
- [player,partner].forEach((p,idx)=>{
-  const isMoving=idx===0?walking:Math.abs(targetX-p.position.x)+Math.abs(targetZ-p.position.z)>.05;
-  p.userData.legs.forEach((leg,i)=>{
-   leg.rotation.x=dancing?Math.sin(t*5+i*Math.PI)*.45:isMoving?Math.sin(t*8+i*Math.PI)*.4:0;
+const photoFrames = [];
+
+function makeFrame(x,y,z,rotationY=0) {
+  const group = new THREE.Group();
+  group.position.set(x,y,z);
+  group.rotation.y = rotationY;
+
+  const frameMat = material(0xb88760,0.45,0.35);
+  const backingMat = material(0x211722);
+
+  const backing = new THREE.Mesh(
+    new THREE.BoxGeometry(1.75,1.55,0.12), backingMat
+  );
+  group.add(backing);
+
+  const top = new THREE.Mesh(new THREE.BoxGeometry(1.92,0.12,0.18),frameMat);
+  top.position.y=0.84; group.add(top);
+  const bottom = top.clone(); bottom.position.y=-0.84; group.add(bottom);
+
+  const sideGeo = new THREE.BoxGeometry(0.12,1.55,0.18);
+  const left = new THREE.Mesh(sideGeo,frameMat);
+  left.position.x=-0.9; group.add(left);
+  const right = left.clone(); right.position.x=0.9; group.add(right);
+
+  const canvas = document.createElement('canvas');
+  canvas.width=512; canvas.height=420;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#352535'; ctx.fillRect(0,0,512,420);
+  ctx.fillStyle='#f0c0d0'; ctx.font='bold 32px Georgia';
+  ctx.textAlign='center'; ctx.fillText('OUR MEMORY',256,190);
+  ctx.fillStyle='#ffffff'; ctx.font='70px Georgia';
+  ctx.fillText('♡',256,280);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.encoding = THREE.sRGBEncoding;
+
+  const picture = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.57,1.37),
+    new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})
+  );
+  picture.position.z=0.075;
+  group.add(picture);
+
+  group.userData.picture=picture;
+  group.userData.canvas=canvas;
+  group.userData.ctx=ctx;
+  group.userData.texture=texture;
+
+  scene.add(group);
+  photoFrames.push(group);
+  return group;
+}
+
+for (let x=-9; x<=9; x+=3) {
+  makeFrame(x,3.8,-17.55,0);
+}
+
+/* Side-wall frames */
+for (let z=-14; z<=3; z+=4.5) {
+  makeFrame(-10.77,3.8,z,Math.PI/2);
+  makeFrame(10.77,3.8,z,-Math.PI/2);
+}
+
+/* Photo upload: fills the next available frame */
+let nextFrame=0;
+document.getElementById('photoBtn').onclick=()=>
+  document.getElementById('upload').click();
+
+document.getElementById('upload').addEventListener('change', event=>{
+  const files=Array.from(event.target.files || []);
+  files.forEach(file=>{
+    if(!file.type.startsWith('image/')) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const frame=photoFrames[nextFrame % photoFrames.length];
+        nextFrame++;
+        const canvas=frame.userData.canvas;
+        const ctx=frame.userData.ctx;
+        ctx.fillStyle='#211722';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        const scale=Math.max(canvas.width/img.width,canvas.height/img.height);
+        const w=img.width*scale, h=img.height*scale;
+        ctx.drawImage(img,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
+        frame.userData.texture.needsUpdate=true;
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
   });
-  p.userData.arms.forEach((arm,i)=>{
-   arm.rotation.x=dancing?Math.sin(t*5+i*Math.PI)*.5:isMoving?Math.sin(t*8+i*Math.PI+Math.PI)*.22:0;
+  event.target.value='';
+});
+
+/* ---------------- DECOR ---------------- */
+
+/* Small warm glowing orbs along the gallery */
+for (let i=0;i<24;i++) {
+  const orb=new THREE.Mesh(
+    new THREE.SphereGeometry(0.045,10,10),
+    new THREE.MeshBasicMaterial({color:i%2?0xffc5da:0xffdfb0})
+  );
+  orb.position.set((Math.random()-0.5)*18,0.2,-16+Math.random()*22);
+  scene.add(orb);
+}
+
+/* A small bench */
+const benchMat=material(0x6c414e,0.65);
+addBox(2.3,0.18,0.55,0,0.75,-8,benchMat);
+addBox(2.3,0.85,0.16,0,1.18,-8.2,benchMat);
+for (const x of [-0.85,0.85]) {
+  addBox(0.12,0.7,0.12,x,0.36,-8,trimMat);
+}
+
+/* ---------------- CHARACTERS ---------------- */
+
+const loader = new THREE.GLTFLoader();
+const clock = new THREE.Clock();
+const keys = {};
+const moveButtons = {};
+let cameraYaw=0;
+let cameraPitch=0.12;
+let isDragging=false;
+let lastX=0,lastY=0;
+let dancing=false;
+let sitting=false;
+let musicPlaying=false;
+let audioContext=null;
+let musicNodes=[];
+
+function makeCharacterPlaceholder(color) {
+  const root=new THREE.Group();
+  const bodyMat=material(color);
+  const skinMat=material(0xd3a080);
+  const body=new THREE.Mesh(new THREE.CapsuleGeometry(0.24,0.65,4,8),bodyMat);
+  body.position.y=1.05;
+  root.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.23,16,12),skinMat);
+  head.position.y=1.72;
+  root.add(head);
+  scene.add(root);
+  return root;
+}
+
+let player=makeCharacterPlaceholder(0x8b496b);
+let partner=makeCharacterPlaceholder(0x4f779d);
+player.position.set(-1,0,2);
+partner.position.set(1,0,0.8);
+
+function findClip(clips, words) {
+  const lowered=clips.map(c=>({clip:c,name:c.name.toLowerCase()}));
+  for (const word of words) {
+    const match=lowered.find(item=>item.name.includes(word));
+    if(match) return match.clip;
+  }
+  return null;
+}
+
+function playCharacterAnimation(character, requested) {
+  const data=character && character.userData;
+  if(!data || !data.mixer || !data.actions) return false;
+
+  const words={
+    idle:['idle','stand','breath','rest'],
+    walk:['walk','walking','run','locomotion'],
+    dance:['dance','dancing','salsa','hip'],
+    sit:['sit','sitting','chair']
+  }[requested] || [requested];
+
+  const clip=findClip(data.clips,words);
+  if(!clip) {
+    data.requestedAnimation=requested;
+    return false;
+  }
+
+  const next=data.mixer.clipAction(clip);
+  if(data.currentAction!==next) {
+    next.reset();
+    next.enabled=true;
+    next.setEffectiveWeight(1);
+    next.setEffectiveTimeScale(1);
+    next.setLoop(requested==='sit'?THREE.LoopRepeat:THREE.LoopRepeat,Infinity);
+    next.clampWhenFinished=false;
+    if(data.currentAction) data.currentAction.crossFadeTo(next,0.25,true);
+    next.play();
+    data.currentAction=next;
+  }
+  data.requestedAnimation=requested;
+  return true;
+}
+
+function loadCharacter(url, oldCharacter, position, label) {
+  return new Promise(resolve=>{
+    loader.load(url, gltf=>{
+      const root=new THREE.Group();
+      const model=gltf.scene || gltf.scenes[0];
+      root.add(model);
+
+      /* Normalize model size and place its feet on the floor */
+      let bounds=new THREE.Box3().setFromObject(model);
+      let size=bounds.getSize(new THREE.Vector3());
+      if(!Number.isFinite(size.y) || size.y<0.05) {
+        throw new Error('The model has no measurable height');
+      }
+
+      const desiredHeight=1.72;
+      model.scale.multiplyScalar(desiredHeight/size.y);
+
+      bounds.setFromObject(model);
+      const center=bounds.getCenter(new THREE.Vector3());
+      model.position.x-=center.x;
+      model.position.z-=center.z;
+      model.position.y-=bounds.min.y;
+
+      root.position.copy(position);
+      root.rotation.y=label==='Man'?Math.PI:0;
+
+      root.userData.mixer=new THREE.AnimationMixer(model);
+      root.userData.clips=gltf.animations || [];
+      root.userData.currentAction=null;
+      root.userData.label=label;
+      root.userData.requestedAnimation='idle';
+
+      scene.add(root);
+      scene.remove(oldCharacter);
+
+      if(root.userData.clips.length) {
+        playCharacterAnimation(root,'idle');
+        console.log(label+' animation clips:',root.userData.clips.map(c=>c.name));
+      } else {
+        console.warn(label+' model has no animation clips.');
+      }
+
+      resolve(root);
+    },undefined,error=>{
+      console.error('Could not load '+url,error);
+      statusEl.textContent='Could not load '+label+'. Check models folder and run a local server.';
+      resolve(oldCharacter);
+    });
   });
-  p.position.y=sitting?-.35:Math.abs(isMoving?Math.sin(t*8)*.035:0);
- });
-
- if(dancing){
-  player.rotation.y+=Math.sin(t*2)*.25;
-  partner.rotation.y+=Math.cos(t*2)*.25;
- }
-
- // Stable, pulled-back third-person camera: keeps heads out of the lens.
- const distance=5.4;
- const cx=player.position.x+Math.sin(yaw)*distance;
- const cz=player.position.z+Math.cos(yaw)*distance;
- camera.position.x+=(cx-camera.position.x)*Math.min(1,dt*3);
- camera.position.z+=(cz-camera.position.z)*Math.min(1,dt*3);
- camera.position.y+=(2.65+pitch-camera.position.y)*Math.min(1,dt*3);
- camera.lookAt(player.position.x,1.0,player.position.z-1.7);
-
- let nearest=null,best=999;
- for(const f of frames){
-  const d=Math.hypot(player.position.x-f.x,player.position.z-f.z);
-  if(d<best){best=d;nearest=f}
- }
- activeFrame=best<3.1?nearest:null;
- $('prompt').style.display=activeFrame?'block':'none';
- if(activeFrame)$('prompt').textContent='♡ Press E / tap · '+activeFrame.title;
- renderer.render(scene,camera);
 }
 
-function openMemory(f){
- if(!f)return;
- selectedFrame=f;
- const img=f.art.material.map.image;
- $('memory').src=img.toDataURL?img.toDataURL():'';
- $('title').textContent=f.title;
- $('note').textContent=f.caption;
- $('modal').classList.add('show');
-}
-function applyPhoto(file,index){
- if(!file||!file.type.startsWith('image/'))return;
- const reader=new FileReader();
- reader.onload=()=>{
-  const image=new Image();
-  image.onload=()=>{
-   const f=frames[index%frames.length];
-   const tex=new THREE.Texture(image);tex.needsUpdate=true;tex.encoding=THREE.sRGBEncoding;
-   f.art.material.map=tex;f.art.material.needsUpdate=true;f.tex=tex;
-   f.title=file.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ')||names[index%names.length];
-   f.caption='A memory we wanted to keep close.';
-  };
-  image.src=reader.result;
- };
- reader.readAsDataURL(file);
-}
+Promise.all([
+  loadCharacter(MODEL_MAN,player,new THREE.Vector3(-1,0,2),'Man'),
+  loadCharacter(MODEL_WOMAN,partner,new THREE.Vector3(1,0,0.8),'Woman')
+]).then(characters=>{
+  player=characters[0];
+  partner=characters[1];
+  statusEl.textContent='Your museum is ready ❤️';
+  loadingEl.style.opacity='0';
+  setTimeout(()=>loadingEl.style.display='none',750);
+});
 
-$('enter').addEventListener('click',start);
-$('home').addEventListener('click',()=>{
- running=false;cancelAnimationFrame(raf);
- $('landing').classList.remove('hide');$('modal').classList.remove('show');
-});
-$('upload').addEventListener('click',()=>$('files').click());
-$('files').addEventListener('change',e=>{
- Array.from(e.target.files).forEach((f,i)=>applyPhoto(f,i));
- e.target.value='';
-});
-$('replace').addEventListener('click',()=>$('replaceFile').click());
-$('replaceFile').addEventListener('change',e=>{
- if(e.target.files[0]&&selectedFrame)applyPhoto(e.target.files[0],selectedFrame.index);
- e.target.value='';
-});
-$('close').addEventListener('click',()=>$('modal').classList.remove('show'));
-$('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
+/* ---------------- CONTROLS ---------------- */
 
 window.addEventListener('keydown',e=>{
- keys[e.code]=true;
- if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
- if(e.code==='KeyE'&&activeFrame)openMemory(activeFrame);
- if(e.code==='Escape')$('modal').classList.remove('show');
-});
-window.addEventListener('keyup',e=>keys[e.code]=false);
+  keys[e.key.toLowerCase()]=true;
+  if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(e.key.toLowerCase()))
+    e.preventDefault();
+},{passive:false});
 
-let pointer=null;
-canvas.addEventListener('pointerdown',e=>{
- pointer={x:e.clientX,y:e.clientY,id:e.pointerId};
- if(e.pointerType==='mouse')canvas.setPointerCapture(e.pointerId);
-});
-canvas.addEventListener('pointermove',e=>{
- if(!pointer||pointer.id!==e.pointerId||e.pointerType!=='mouse'||!e.buttons)return;
- yaw-=(e.clientX-pointer.x)*.004;
- pitch=THREE.MathUtils.clamp(pitch-(e.clientY-pointer.y)*.003,-.4,.6);
- pointer={x:e.clientX,y:e.clientY,id:e.pointerId};
-});
-canvas.addEventListener('pointerup',e=>{
- if(!pointer)return;
- const dist=Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y);
- pointer=null;
- if(dist<10&&activeFrame)openMemory(activeFrame);
+window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
+
+document.querySelectorAll('[data-move]').forEach(button=>{
+  const direction=button.dataset.move;
+  const down=e=>{e.preventDefault();moveButtons[direction]=true;};
+  const up=e=>{e.preventDefault();moveButtons[direction]=false;};
+  button.addEventListener('pointerdown',down);
+  button.addEventListener('pointerup',up);
+  button.addEventListener('pointercancel',up);
+  button.addEventListener('pointerleave',up);
 });
 
-const joy=$('joy'),knob=$('knob');let joyId=null;
-function joyMove(e){
- const r=joy.getBoundingClientRect();
- let x=(e.clientX-(r.left+r.width/2))/(r.width*.38);
- let y=(e.clientY-(r.top+r.height/2))/(r.height*.38);
- const l=Math.hypot(x,y)||1;if(l>1){x/=l;y/=l}
- moveX=x;moveY=y;
- knob.style.left=(50+x*34)+'%';knob.style.top=(50+y*34)+'%';
+renderer.domElement.addEventListener('pointerdown',e=>{
+  isDragging=true;lastX=e.clientX;lastY=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!isDragging)return;
+  cameraYaw-=(e.clientX-lastX)*0.004;
+  cameraPitch-=(e.clientY-lastY)*0.003;
+  cameraPitch=Math.max(-0.35,Math.min(0.65,cameraPitch));
+  lastX=e.clientX;lastY=e.clientY;
+});
+renderer.domElement.addEventListener('pointerup',()=>{isDragging=false;});
+renderer.domElement.addEventListener('pointercancel',()=>{isDragging=false;});
+
+/* ---------------- ACTION BUTTONS ---------------- */
+
+function updateActionButtons() {
+  document.getElementById('danceBtn').classList.toggle('active',dancing);
+  document.getElementById('sitBtn').classList.toggle('active',sitting);
 }
-function joyEnd(){joyId=null;moveX=0;moveY=0;knob.style.left='50%';knob.style.top='50%'}
-joy.addEventListener('pointerdown',e=>{e.preventDefault();joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e)});
-joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});
-joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
 
-let lookStart=null;
-$('look').addEventListener('pointerdown',e=>{
- lookStart={x:e.clientX,y:e.clientY,id:e.pointerId};
- $('look').setPointerCapture(e.pointerId);
-});
-$('look').addEventListener('pointermove',e=>{
- if(!lookStart||lookStart.id!==e.pointerId)return;
- yaw-=(e.clientX-lookStart.x)*.008;
- pitch=THREE.MathUtils.clamp(pitch-(e.clientY-lookStart.y)*.004,-.4,.6);
- lookStart={x:e.clientX,y:e.clientY,id:e.pointerId};
-});
-$('look').addEventListener('pointerup',()=>lookStart=null);
-$('look').addEventListener('pointercancel',()=>lookStart=null);
+document.getElementById('danceBtn').onclick=()=>{
+  dancing=!dancing;
+  if(dancing) sitting=false;
+  updateActionButtons();
+};
+document.getElementById('sitBtn').onclick=()=>{
+  sitting=!sitting;
+  if(sitting) dancing=false;
+  updateActionButtons();
+};
+document.getElementById('standBtn').onclick=()=>{
+  sitting=false;dancing=false;updateActionButtons();
+};
 
-// Soft, original ambient notes generated in-browser after a user tap.
-const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
-function playTone(freq,when,duration){
- const osc=audio.createOscillator(),gain=audio.createGain();
- osc.type='sine';osc.frequency.value=freq;
- gain.gain.setValueAtTime(.0001,when);
- gain.gain.exponentialRampToValueAtTime(.025,when+.18);
- gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
- osc.connect(gain);gain.connect(audio.destination);
- osc.start(when);osc.stop(when+duration+.05);
+/* ---------------- BACKGROUND MUSIC ---------------- */
+/* Generates a gentle ambient melody in the browser. */
+
+function startMusic() {
+  const AC=window.AudioContext || window.webkitAudioContext;
+  if(!AC) {
+    statusEl.textContent='This browser does not support generated music.';
+    return;
+  }
+
+  audioContext=audioContext || new AC();
+  audioContext.resume();
+
+  const master=audioContext.createGain();
+  master.gain.value=0.055;
+  master.connect(audioContext.destination);
+  musicNodes.push(master);
+
+  const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
+  notes.forEach((frequency,i)=>{
+    const osc=audioContext.createOscillator();
+    const gain=audioContext.createGain();
+    osc.type='sine';
+    osc.frequency.value=frequency;
+    gain.gain.value=0.0001;
+    osc.connect(gain);gain.connect(master);
+    const t=audioContext.currentTime+i*0.55;
+    gain.gain.setValueAtTime(0.0001,t);
+    gain.gain.linearRampToValueAtTime(0.35,t+0.12);
+    gain.gain.linearRampToValueAtTime(0.0001,t+0.48);
+    osc.start(t);
+    osc.stop(t+0.52);
+    osc.onended=()=>{if(musicPlaying)osc.start(audioContext.currentTime);};
+  });
 }
-function musicLoop(){
- if(!musicOn)return;
- const now=audio.currentTime;
- playTone(notes[musicStep%notes.length],now,1.7);
- if(musicStep%4===0)playTone(notes[(musicStep+2)%notes.length]/2,now,2);
- musicStep++;musicTimer=setTimeout(musicLoop,850);
-}
-$('music').addEventListener('click',async()=>{
- if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();
- if(!musicOn){
-  await audio.resume();musicOn=true;$('music').textContent='♫ Music: on';musicLoop();
- }else{
-  musicOn=false;clearTimeout(musicTimer);$('music').textContent='♫ Music: off';
- }
-});
 
-$('dance')?.addEventListener('click',()=>{dancing=!dancing});
-$('sit')?.addEventListener('click',()=>{sitting=!sitting});
+document.getElementById('musicBtn').onclick=()=>{
+  musicPlaying=!musicPlaying;
+  document.getElementById('musicBtn').classList.toggle('active',musicPlaying);
+  if(musicPlaying) {
+    startMusic();
+    statusEl.textContent='Ambient music on ♫';
+  } else {
+    if(audioContext) audioContext.suspend();
+    statusEl.textContent='Music paused';
+  }
+};
+
+/* ---------------- MOVEMENT + ANIMATION ---------------- */
+
+const clockDeltaLimit=0.05;
+let elapsed=0;
+
+function hasMove(direction) {
+  if(direction==='forward') return keys.w||keys.arrowup||moveButtons.forward;
+  if(direction==='back') return keys.s||keys.arrowdown||moveButtons.back;
+  if(direction==='left') return keys.a||keys.arrowleft||moveButtons.left;
+  if(direction==='right') return keys.d||keys.arrowright||moveButtons.right;
+  return false;
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt=Math.min(clock.getDelta(),clockDeltaLimit);
+  elapsed+=dt;
+
+  if(player) {
+    const forward=hasMove('forward');
+    const back=hasMove('back');
+    const left=hasMove('left');
+    const right=hasMove('right');
+    const moving=(forward||back||left||right)&&!sitting&&!dancing;
+
+    if(moving) {
+      const direction=new THREE.Vector3();
+      direction.z=(forward?1:0)-(back?1:0);
+      direction.x=(right?1:0)-(left?1:0);
+      direction.normalize();
+
+      const sin=Math.sin(cameraYaw),cos=Math.cos(cameraYaw);
+      const dx=direction.x*cos+direction.z*sin;
+      const dz=direction.z*cos-direction.x*sin;
+
+      player.position.x+=dx*3.0*dt;
+      player.position.z+=dz*3.0*dt;
+      player.rotation.y=Math.atan2(dx,dz);
+    }
+
+    /* Keep the character inside the museum */
+    player.position.x=THREE.MathUtils.clamp(player.position.x,-9.8,9.8);
+    player.position.z=THREE.MathUtils.clamp(player.position.z,-16.8,8.5);
+
+    const requested=sitting?'sit':dancing?'dance':moving?'walk':'idle';
+    if(player.userData.lastRequested!==requested) {
+      playCharacterAnimation(player,requested);
+      player.userData.lastRequested=requested;
+    }
+
+    /* Gentle fallback motion if the model has no matching clip */
+    const matched=player.userData.currentAction;
+    if(!matched) {
+      player.position.y=(dancing?Math.abs(Math.sin(elapsed*8))*0.09:0);
+      if(dancing) player.rotation.y+=dt*2.5;
+      if(sitting) player.position.y=-0.18;
+      else if(!dancing) player.position.y=0;
+    } else {
+      player.position.y=0;
+    }
+  }
+
+  /* Partner's idle / dance / sit state */
+  if(partner) {
+    const partnerAction=dancing?'dance':sitting?'sit':'idle';
+    if(partner.userData.lastRequested!==partnerAction) {
+      playCharacterAnimation(partner,partnerAction);
+      partner.userData.lastRequested=partnerAction;
+    }
+
+    if(!partner.userData.currentAction) {
+      partner.position.y=dancing?Math.abs(Math.sin(elapsed*6+1))*0.06:0;
+      if(dancing) partner.rotation.y+=dt*1.4;
+    } else {
+      partner.position.y=0;
+    }
+  }
+
+  /* Update all loaded animation mixers */
+  [player,partner].forEach(character=>{
+    if(character?.userData?.mixer) character.userData.mixer.update(dt);
+  });
+
+  /* Follow camera */
+  if(player) {
+    const target=new THREE.Vector3(
+      player.position.x,
+      player.position.y+1.25,
+      player.position.z
+    );
+
+    const distance=4.5;
+    const horizontal=Math.cos(cameraPitch)*distance;
+    camera.position.set(
+      target.x+Math.sin(cameraYaw)*horizontal,
+      target.y+1.0+Math.sin(cameraPitch)*distance,
+      target.z+Math.cos(cameraYaw)*horizontal
+    );
+    camera.lookAt(target);
+  }
+
+  /* Softly animate lights */
+  mainLight.intensity=2.05+Math.sin(elapsed*0.7)*0.12;
+  renderer.render(scene,camera);
+}
+animate();
+
+/* ---------------- RESIZE ---------------- */
 
 window.addEventListener('resize',()=>{
- if(!renderer||!camera)return;
- camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
- renderer.setSize(innerWidth,innerHeight);
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
 });
+
 })();
 </script>
 </body>
 </html>
+
