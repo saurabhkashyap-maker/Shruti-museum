@@ -7,28 +7,29 @@
 <title>Our Museum ❤️</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#1c120f;color:#f5e8d5;font-family:Arial,sans-serif}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17100d;color:#f5e8d5;font-family:Arial,sans-serif}
 button{cursor:pointer;color:#f8ead8;background:#261b17;border:1px solid #8d7560;border-radius:30px;padding:12px 16px}
 button:hover{background:#584033}
-#home{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;background:radial-gradient(ellipse,#4b302a 0%,#1d1311 68%)}
+button:active{transform:scale(.98)}
+#home{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;background:radial-gradient(ellipse,#39241f 0%,#1d1311 68%)}
 .eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#cbb8a5}
 h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(48px,9vw,100px);line-height:.95;margin:25px 0;color:#f4e5d3}
 h1 em{display:block;color:#c997a6;font-size:.65em}
 #enter{background:#f0dfc8;color:#271914;border:0;padding:17px 30px;margin-top:25px}
 #app{position:absolute;inset:0;display:none}
-#world{position:absolute;inset:0;width:100%;height:100%;display:block}
-#top{position:absolute;top:0;left:0;right:0;padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;pointer-events:none;background:linear-gradient(#211610aa,transparent)}
+#world{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#top{position:absolute;top:0;left:0;right:0;padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;pointer-events:none;background:linear-gradient(#17100dee,transparent)}
 #brand{font:italic 32px Georgia,serif;text-shadow:0 2px 8px #000}
 #help{font-size:12px;color:#ead9c5;line-height:1.7;margin-top:5px}
 #buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
 #buttons button{font-size:12px}
 #actions{position:absolute;right:16px;bottom:70px;display:flex;flex-direction:column;gap:9px}
+#actions button{background:#241914eF}
 #status{position:absolute;left:12px;bottom:12px;font-size:12px;background:#201713e8;border:1px solid #8b6e57;border-radius:8px;padding:10px;max-width:75%}
 #footer{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:2px;color:#f3dfc7aa;pointer-events:none}
-#joystick{position:absolute;bottom:25px;left:22px;width:105px;height:105px;border-radius:50%;border:1px solid #e4cdb777;background:#241a1755;display:none;touch-action:none}
-#stick{position:absolute;width:43px;height:43px;left:30px;top:30px;border-radius:50%;background:#e5cbb4aa;border:1px solid #fff5}
+#joystick{position:absolute;bottom:25px;left:22px;width:105px;height:105px;border-radius:50%;border:1px solid #e4cdb777;background:#241a1777;display:none;touch-action:none}
+#stick{position:absolute;width:43px;height:43px;left:30px;top:30px;border-radius:50%;background:#e5cbb4cc;border:1px solid #fff5;pointer-events:none}
 #photos{display:none}
-#hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff8;font-size:11px;pointer-events:none}
 @media(max-width:650px){
  #top{padding:12px;flex-direction:column}
  #brand{font-size:26px}
@@ -38,6 +39,7 @@ h1 em{display:block;color:#c997a6;font-size:.65em}
  #actions{right:10px;bottom:125px}
  #joystick{display:block}
  #footer{font-size:8px;bottom:8px}
+ #status{max-width:58%;font-size:10px}
 }
 </style>
 </head>
@@ -81,87 +83,74 @@ h1 em{display:block;color:#c997a6;font-size:.65em}
 <script>
 (() => {
 "use strict";
+const $=id=>document.getElementById(id);
+const home=$("home"),app=$("app"),canvas=$("world");
+let scene,camera,renderer,clock,loader;
+let player=null,partner=null;
+let running=false,dancing=false,sitting=false;
+let audioContext=null,musicTimer=null,musicOn=false;
+let yaw=0,pitch=-0.08,dragging=false,lastX=0,lastY=0;
+let moveForward=0,moveSide=0,frameId=0;
+const keys={};
+const clamp=THREE.MathUtils.clamp;
 
-const $ = id => document.getElementById(id);
-const home = $("home"), app = $("app"), canvas = $("world");
-let scene, camera, renderer, clock, loader;
-let player, partner, mixerList = [];
-let running = false, dancing = false, sitting = false;
-let audioContext = null, musicTimer = null, musicOn = false;
-let yaw = 0, pitch = -0.12, dragging = false, lastX = 0, lastY = 0;
-let moveForward = 0, moveSide = 0, frameId = 0;
-const keys = {};
-const clockNow = () => performance.now();
-
-function status(message) {
- $("status").textContent = message;
-}
-
-function material(color, roughness=0.85) {
+function status(message){$("status").textContent=message}
+function material(color,roughness=.9){
  return new THREE.MeshStandardMaterial({color,roughness});
 }
-
-function box(parent, w,h,d, color, x,y,z, options={}) {
- const mesh = new THREE.Mesh(
-  new THREE.BoxGeometry(w,h,d),
-  options.material || material(color)
- );
+function box(parent,w,h,d,color,x,y,z){
+ const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material(color));
  mesh.position.set(x,y,z);
- if(options.rotationY) mesh.rotation.y=options.rotationY;
- if(options.rotationZ) mesh.rotation.z=options.rotationZ;
+ mesh.castShadow=true;
+ mesh.receiveShadow=true;
+ parent.add(mesh);
+ return mesh;
+}
+function sphere(parent,r,color,x,y,z,sx=1,sy=1,sz=1){
+ const mesh=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),material(color));
+ mesh.position.set(x,y,z);
+ mesh.scale.set(sx,sy,sz);
  mesh.castShadow=true;
  mesh.receiveShadow=true;
  parent.add(mesh);
  return mesh;
 }
 
-function sphere(parent, radius, color, x,y,z, sx=1,sy=1,sz=1) {
- const mesh = new THREE.Mesh(
-  new THREE.SphereGeometry(radius,18,14),material(color)
- );
- mesh.position.set(x,y,z);
- mesh.scale.set(sx,sy,sz);
- mesh.castShadow=true;
- parent.add(mesh);
- return mesh;
-}
-
-function makeFallbackCharacter(isWoman) {
- const root = new THREE.Group();
- const skin = isWoman ? 0xd6aa91 : 0xc99d7d;
- const shirt = isWoman ? 0xf0e2d1 : 0x967052;
- const trousers = isWoman ? 0x45666c : 0x49362d;
- const hair = isWoman ? 0x57352b : 0x3a2b24;
-
- const body = new THREE.Group();
+function makeFallbackCharacter(isWoman){
+ const root=new THREE.Group();
+ const skin=isWoman?0xc99a7e:0xb98a6a;
+ const shirt=isWoman?0xe0c5ad:0x78533c;
+ const trousers=isWoman?0x344d50:0x35271f;
+ const hair=isWoman?0x43271f:0x241b17;
+ const body=new THREE.Group();
  root.add(body);
- box(body,.46,.62,.26,shirt,0,1.03,0);
- sphere(body,.20,skin,0,1.53,0,1,1.08,.92);
- sphere(body,.215,hair,0,1.66,-.005,1,.62,.98);
+
+ box(body,.43,.58,.25,shirt,0,1.04,0);
+ sphere(body,.185,skin,0,1.48,0,1,1.08,.92);
+ sphere(body,.20,hair,0,1.61,-.005,1,.62,.98);
 
  if(isWoman){
-  sphere(body,.09,hair,-.19,1.49,0,1,1.5,1);
-  sphere(body,.09,hair,.19,1.49,0,1,1.5,1);
-  box(body,.18,.16,.16,skin,0,1.34,0);
+  sphere(body,.075,hair,-.18,1.44,.005,1,1.6,1);
+  sphere(body,.075,hair,.18,1.44,.005,1,1.6,1);
  }
- // Simple eyes face toward negative Z.
- sphere(body,.022,0x30211c,-.07,1.55,-.178,.8,.8,.5);
- sphere(body,.022,0x30211c,.07,1.55,-.178,.8,.8,.5);
+ // Face points toward the character's local -Z direction.
+ sphere(body,.018,0x241713,-.065,1.50,-.168,.8,.8,.5);
+ sphere(body,.018,0x241713,.065,1.50,-.168,.8,.8,.5);
 
- const legs=[], arms=[];
+ const legs=[],arms=[];
  for(const side of [-1,1]){
   const leg=new THREE.Group();
-  leg.position.set(side*.13,.77,0);
+  leg.position.set(side*.12,.77,0);
   body.add(leg);
-  box(leg,.15,.68,.17,trousers,0,-.28,0);
-  box(leg,.17,.10,.28,0x39271f,0,-.64,-.035);
+  box(leg,.14,.62,.15,trousers,0,-.27,0);
+  box(leg,.16,.09,.25,0x211814,0,-.59,-.035);
   legs.push(leg);
 
   const arm=new THREE.Group();
-  arm.position.set(side*.28,1.25,0);
+  arm.position.set(side*.26,1.25,0);
   body.add(arm);
-  box(arm,.13,.48,.14,shirt,0,-.20,0);
-  sphere(arm,.07,skin,0,-.46,0);
+  box(arm,.12,.43,.13,shirt,0,-.19,0);
+  sphere(arm,.055,skin,0,-.42,0);
   arms.push(arm);
  }
  root.userData.body=body;
@@ -169,26 +158,29 @@ function makeFallbackCharacter(isWoman) {
  root.userData.arms=arms;
  root.userData.isFallback=true;
  root.userData.baseY=0;
- scene.add(root);
+ root.userData.activeClipType="";
  return root;
 }
 
-function makeFrame(x,y,z,rotationY,index) {
- const group = new THREE.Group();
+function makeFrame(x,y,z,rotationY,index){
+ const group=new THREE.Group();
  group.position.set(x,y,z);
  group.rotation.y=rotationY;
  scene.add(group);
- box(group,.82,1.13,.09,0x34251d,0,0,0);
- box(group,.73,1.04,.035,0xdac5a5,0,0,.055);
- const colors=[0xb88676,0xbba88a,0x988397,0x92977d,0xb58b7b,0x8b9390];
+ box(group,.82,1.13,.09,0x2c201a,0,0,0);
+ box(group,.73,1.04,.035,0x9c8065,0,0,.055);
+ const colors=[0x755044,0x82745c,0x64505e,0x59614f,0x815b4b,0x515c5b];
  box(group,.62,.91,.018,colors[index%colors.length],0,0,.08);
- sphere(group,.20,0xffffff,0,.25,.102,1,1,.08).material.opacity=.12;
+
  const textCanvas=document.createElement("canvas");
  textCanvas.width=256;textCanvas.height=256;
  const ctx=textCanvas.getContext("2d");
- ctx.fillStyle="#f1dfc9";ctx.font="italic 22px Georgia";
- ctx.textAlign="center";ctx.fillText("Memory "+(index+1),128,122);
- ctx.font="12px Georgia";ctx.fillText("A moment with you",128,148);
+ ctx.fillStyle="#ead5bd";
+ ctx.font="italic 22px Georgia";
+ ctx.textAlign="center";
+ ctx.fillText("Memory "+(index+1),128,122);
+ ctx.font="12px Georgia";
+ ctx.fillText("A moment with you",128,148);
  const texture=new THREE.CanvasTexture(textCanvas);
  const sign=new THREE.Mesh(
   new THREE.PlaneGeometry(.60,.60),
@@ -196,246 +188,312 @@ function makeFrame(x,y,z,rotationY,index) {
  );
  sign.position.set(0,-.02,.105);
  group.add(sign);
- return group;
 }
 
-function makeMuseum() {
- scene = new THREE.Scene();
- scene.background = new THREE.Color(0x5b4637);
- scene.fog = new THREE.Fog(0x5b4637,18,45);
+function makeMuseum(){
+ scene=new THREE.Scene();
+ scene.background=new THREE.Color(0x211711);
+ scene.fog=new THREE.Fog(0x211711,16,38);
 
- camera = new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,100);
- camera.position.set(0,2.5,7);
+ camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,100);
+ camera.position.set(0,2.8,7);
 
- renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
- renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
+ renderer=new THREE.WebGLRenderer({
+  canvas,antialias:true,alpha:false
+ });
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
  renderer.setSize(innerWidth,innerHeight);
  renderer.shadowMap.enabled=true;
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputEncoding=THREE.sRGBEncoding;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=1.25;
+ renderer.toneMappingExposure=.78;
 
- scene.add(new THREE.HemisphereLight(0xffe9d1,0x5d4030,2.0));
- const lamp=new THREE.DirectionalLight(0xffdfb9,2.0);
+ // Dark, warm lighting; reduced intensity to avoid a washed-out room.
+ scene.add(new THREE.HemisphereLight(0xc9a98a,0x21150f,.75));
+ const lamp=new THREE.DirectionalLight(0xffd4a4,1.05);
  lamp.position.set(-4,8,5);
  lamp.castShadow=true;
+ lamp.shadow.mapSize.set(1024,1024);
  scene.add(lamp);
- const warm=new THREE.PointLight(0xffc58f,1.1,30);
- warm.position.set(0,4,0);
+
+ const warm=new THREE.PointLight(0xd99565,.65,25);
+ warm.position.set(0,3.5,-7);
  scene.add(warm);
+ const entranceLight=new THREE.PointLight(0xb8755c,.35,14);
+ entranceLight.position.set(0,3,2);
+ scene.add(entranceLight);
 
  // Floor
- box(scene,22,.2,30,0xb29b81,0,-.12,-5);
- const grid=new THREE.GridHelper(22,22,0xe2cbb0,0xe2cbb0);
+ box(scene,22,.2,30,0x594332,0,-.12,-5);
+ const grid=new THREE.GridHelper(22,22,0x94765a,0x94765a);
  grid.position.set(0,-.01,-5);
  grid.material.transparent=true;
- grid.material.opacity=.24;
+ grid.material.opacity=.10;
  scene.add(grid);
 
  // Walls and ceiling
- box(scene,22,6,.3,0x765b46,0,3,-20);
- box(scene,.3,6,30,0x674e3c,-11,3,-5);
- box(scene,.3,6,30,0x674e3c,11,3,-5);
- box(scene,22,.25,30,0x38271e,0,6,-5);
+ box(scene,22,6,.3,0x493328,0,3,-20);
+ box(scene,.3,6,30,0x3d2b21,-11,3,-5);
+ box(scene,.3,6,30,0x3d2b21,11,3,-5);
+ box(scene,22,.25,30,0x211711,0,6,-5);
 
- // Wall frames
- for(let i=0;i<7;i++){
-  makeFrame(-8+i*2.65,3.1,-19.78,0,i);
- }
+ for(let i=0;i<7;i++)makeFrame(-8+i*2.65,3.1,-19.78,0,i);
  for(let i=0;i<6;i++){
   makeFrame(-10.78,3.1,-17+i*4.5,Math.PI/2,i+7);
   makeFrame(10.78,3.1,-17+i*4.5,-Math.PI/2,i+13);
  }
 
- // Center bench and memory pedestals
- box(scene,3,.25,.8,0xd5c2a6,0,.7,-7);
- box(scene,.24,.75,.24,0x654a35,-1.15,.28,-7);
- box(scene,.24,.75,.24,0x654a35,1.15,.28,-7);
+ // Bench and pedestals
+ box(scene,3,.22,.8,0x826447,0,.7,-7);
+ box(scene,.24,.75,.24,0x493226,-1.15,.28,-7);
+ box(scene,.24,.75,.24,0x493226,1.15,.28,-7);
 
- box(scene,.95,1.05,.95,0x9d8973,-4,.48,-11);
- sphere(scene,.28,0xd5aeb4,-4,1.28,-11,1,1,.8);
- box(scene,.95,1.05,.95,0x9d8973,4,.48,-13);
- sphere(scene,.24,0xd5aeb4,4,1.25,-13,1,1,.8);
+ box(scene,.95,1.05,.95,0x6b5543,-4,.48,-11);
+ sphere(scene,.28,0xa9787e,-4,1.28,-11,1,1,.8);
+ box(scene,.95,1.05,.95,0x6b5543,4,.48,-13);
+ sphere(scene,.24,0xa9787e,4,1.25,-13,1,1,.8);
 
- // Characters appear close to the entrance, not at the far end.
  player=makeFallbackCharacter(false);
- player.position.set(-.7,0,2);
+ player.position.set(-.65,0,2);
  player.rotation.y=Math.PI;
+ scene.add(player);
 
  partner=makeFallbackCharacter(true);
- partner.position.set(.7,0,1.9);
+ partner.position.set(.65,0,1.65);
  partner.rotation.y=Math.PI;
+ scene.add(partner);
 
  clock=new THREE.Clock();
- loader=window.THREE && THREE.GLTFLoader ? new THREE.GLTFLoader() : null;
+ loader=THREE.GLTFLoader?new THREE.GLTFLoader():null;
 }
 
-function loadCharacter(url, oldCharacter, label, position) {
- if(!loader) return;
- loader.load(url, gltf => {
-  try {
-   const model=gltf.scene || (gltf.scenes && gltf.scenes[0]);
-   if(!model) throw new Error("No model scene found");
+function loadCharacter(url,oldCharacter,label,position){
+ if(!loader){
+  console.warn("GLTFLoader unavailable");
+  status("3D loader unavailable. Showing built-in characters.");
+  return;
+ }
+ status("Loading "+label+" character…");
 
-   model.updateMatrixWorld(true);
-   const bounds=new THREE.Box3().setFromObject(model);
-   const size=bounds.getSize(new THREE.Vector3());
-   if(!Number.isFinite(size.y) || size.y<0.001) throw new Error("Model has invalid dimensions");
+ loader.load(url,gltf=>{
+  try{
+   const model=gltf.scene||(gltf.scenes&&gltf.scenes[0]);
+   if(!model)throw new Error("No model scene found");
 
-   // Normalize model height, center it, and place its feet on the floor.
-   model.scale.multiplyScalar(1.7/size.y);
+   // Keep the model inside a wrapper so movement stays independent
+   // from the model's original GLB origin and rig hierarchy.
    model.updateMatrixWorld(true);
-   const fitted=new THREE.Box3().setFromObject(model);
-   const center=fitted.getCenter(new THREE.Vector3());
+   const originalBounds=new THREE.Box3().setFromObject(model);
+   const originalSize=originalBounds.getSize(new THREE.Vector3());
+   if(!Number.isFinite(originalSize.y)||originalSize.y<.001){
+    throw new Error("Invalid model dimensions");
+   }
+
+   const wrapper=new THREE.Group();
+   wrapper.position.copy(position);
+   const pivot=new THREE.Group();
+   wrapper.add(pivot);
+   pivot.add(model);
+
+   // Normalize height first, then shift the model's feet to y = 0.
+   model.scale.multiplyScalar(1.7/originalSize.y);
+   model.updateMatrixWorld(true);
+   let fitted=new THREE.Box3().setFromObject(model);
+   let center=fitted.getCenter(new THREE.Vector3());
    model.position.x-=center.x;
    model.position.z-=center.z;
    model.position.y-=fitted.min.y;
    model.updateMatrixWorld(true);
 
-   const wrapper=new THREE.Group();
-   wrapper.position.copy(position);
-   wrapper.add(model);
+   // Some exported models face the opposite direction. Change this
+   // only if the GLB's own orientation requires it.
+   wrapper.userData.model=model;
+   wrapper.userData.pivot=pivot;
    wrapper.userData.isFallback=false;
    wrapper.userData.isRigged=true;
    wrapper.userData.clips=gltf.animations||[];
    wrapper.userData.mixer=new THREE.AnimationMixer(model);
-   wrapper.userData.actions={};
    wrapper.userData.currentAction=null;
+   wrapper.userData.activeClipType="";
 
    wrapper.userData.playClip=function(type){
-    const words={
+    const names={
      idle:["idle","stand","breath","rest"],
      walk:["walk","walking","run","locomotion"],
      dance:["dance","dancing","salsa","hip"],
      sit:["sit","sitting","chair"]
     }[type]||[type];
-    const clip=this.userData.clips.find(c=>words.some(w=>c.name.toLowerCase().includes(w)));
-    if(!clip) return false;
+
+    const clips=this.userData.clips;
+    const clip=clips.find(c=>names.some(n=>c.name.toLowerCase().includes(n)));
+    if(!clip)return false;
+
     const next=this.userData.mixer.clipAction(clip);
     if(this.userData.currentAction!==next){
-     if(this.userData.currentAction)this.userData.currentAction.fadeOut(.2);
-     next.reset();next.enabled=true;next.setEffectiveWeight(1);
-     next.setLoop(THREE.LoopRepeat,Infinity);next.fadeIn(.2).play();
+     if(this.userData.currentAction)this.userData.currentAction.fadeOut(.18);
+     next.reset();
+     next.enabled=true;
+     next.setEffectiveWeight(1);
+     next.setLoop(THREE.LoopRepeat,Infinity);
+     next.fadeIn(.18).play();
      this.userData.currentAction=next;
     }
+    this.userData.activeClipType=type;
     return true;
    };
 
+   // Make sure the replacement is in the scene before removing fallback.
    scene.add(wrapper);
-   scene.remove(oldCharacter);
-   if(label==="Man")player=wrapper;else partner=wrapper;
-   mixerList.push(wrapper);
+   if(oldCharacter)scene.remove(oldCharacter);
+
+   if(label==="Man")player=wrapper;
+   else partner=wrapper;
+
+   // Prefer an idle clip if the model has one; movement still works
+   // even if the GLB has no animation clips.
    wrapper.userData.playClip("idle");
-   status(label+" character loaded.");
-  } catch(err) {
-   console.error(label+" model setup error:",err);
-   status(label+" model could not be fitted. Using fallback character.");
+   console.log(label+" model loaded. Available animations:",
+    wrapper.userData.clips.map(c=>c.name));
+   status(label+" character loaded ❤️");
+  }catch(err){
+   console.error(label+" model setup failed:",err);
+   status(label+" model setup failed; using built-in character.");
   }
  },undefined,error=>{
-  console.error(label+" GLB load failed:",url,error);
-  status(label+" model not found. Using fallback character.");
+  console.error(label+" GLB failed to load:",url,error);
+  status(label+" model couldn't load; using built-in character.");
  });
 }
 
-function updateCharacter(character,dt,time) {
+function updateCharacter(character,dt,time,isMoving){
  if(!character)return;
+
  if(character.userData.mixer)character.userData.mixer.update(dt);
 
- const isMoving=Math.abs(moveForward)+Math.abs(moveSide)>.05;
  if(character.userData.isFallback){
   const body=character.userData.body;
-  if(body){
-   body.position.y=isMoving?Math.abs(Math.sin(time*9))*.045:0;
-   character.userData.legs.forEach((leg,i)=>{
-    leg.rotation.x=isMoving?Math.sin(time*9+i*Math.PI)*.55:0;
-   });
-   character.userData.arms.forEach((arm,i)=>{
-    arm.rotation.x=dancing?Math.sin(time*7+i*Math.PI)*.8:
-      isMoving?Math.sin(time*9+i*Math.PI)*.35:0;
-    arm.rotation.z=dancing?Math.sin(time*5+i)*.25:0;
-   });
-   if(dancing)body.rotation.y=Math.sin(time*2)*.12;
-  }
- } else if(character.userData.isRigged) {
-  let type=sitting?"sit":dancing?"dance":isMoving?"walk":"idle";
-  if(type!==character.userData.activeClipType){
-   if(character.userData.playClip(type)){
-    character.userData.activeClipType=type;
+  if(!body)return;
+
+  body.position.y=isMoving&&!sitting?Math.abs(Math.sin(time*9))*.045:0;
+  character.userData.legs.forEach((leg,i)=>{
+   leg.rotation.x=isMoving&&!sitting?Math.sin(time*9+i*Math.PI)*.48:0;
+  });
+  character.userData.arms.forEach((arm,i)=>{
+   arm.rotation.x=dancing?Math.sin(time*7+i*Math.PI)*.7:
+    isMoving&&!sitting?Math.sin(time*9+i*Math.PI)*.28:0;
+   arm.rotation.z=dancing?Math.sin(time*5+i)*.22:0;
+  });
+  body.rotation.y=dancing?Math.sin(time*2)*.12:0;
+  body.rotation.x=0;
+  return;
+ }
+
+ if(character.userData.isRigged){
+  // Try the requested clip, then fall back to walk/idle when a
+  // particular clip is absent. Root movement works regardless.
+  const desired=sitting?"sit":dancing?"dance":isMoving?"walk":"idle";
+  if(character.userData.activeClipType!==desired){
+   if(!character.userData.playClip(desired)){
+    const fallback=isMoving?"walk":"idle";
+    if(!character.userData.playClip(fallback)){
+     // Leave the current action alone if the model has no matching clip.
+     character.userData.activeClipType=desired;
+    }
    }
   }
  }
 }
 
-function animate() {
+function animate(){
  if(!running)return;
  frameId=requestAnimationFrame(animate);
+
  const dt=Math.min(clock.getDelta(),.05);
  const time=clock.elapsedTime;
+ let f=moveForward,s=moveSide;
 
- // Keyboard and joystick movement
- let f=moveForward, s=moveSide;
- if(keys.w||keys.ArrowUp)f=1;
- if(keys.s||keys.ArrowDown)f=-1;
- if(keys.a||keys.ArrowLeft)s=-1;
- if(keys.d||keys.ArrowRight)s=1;
+ if(keys.w||keys.W||keys.ArrowUp)f=1;
+ if(keys.s||keys.S||keys.ArrowDown)f=-1;
+ if(keys.a||keys.A||keys.ArrowLeft)s=-1;
+ if(keys.d||keys.D||keys.ArrowRight)s=1;
+
+ // Normalize diagonal movement so it isn't faster.
+ const length=Math.hypot(f,s);
+ if(length>1){f/=length;s/=length;}
+ const moving=Math.abs(f)+Math.abs(s)>.05&&!sitting;
 
  if(player){
   const speed=(sitting?0:3.0)*dt;
   const dx=(Math.sin(yaw)*f+Math.cos(yaw)*s)*speed;
   const dz=(-Math.cos(yaw)*f+Math.sin(yaw)*s)*speed;
-  player.position.x=THREE.MathUtils.clamp(player.position.x+dx,-9.3,9.3);
-  player.position.z=THREE.MathUtils.clamp(player.position.z+dz,-18.5,4.5);
-  if(Math.abs(f)+Math.abs(s)>.05&&!dancing&&!sitting){
-   player.rotation.y=Math.atan2(dx,dz);
-  }
-  if(sitting)player.position.y=-.35;
-  else player.position.y=0;
- }
- if(partner){
-  // Partner stays nearby, making both characters visible.
-  const targetX=player?player.position.x+1.05:1;
-  const targetZ=player?player.position.z-.15:1.5;
-  if(!dancing&&!sitting){
-   partner.position.x+=(targetX-partner.position.x)*Math.min(1,dt*1.3);
-   partner.position.z+=(targetZ-partner.position.z)*Math.min(1,dt*1.3);
-  }
-  if(sitting)partner.position.y=-.35;else partner.position.y=0;
-  if(player)partner.rotation.y=Math.atan2(player.position.x-partner.position.x,player.position.z-partner.position.z);
- }
- updateCharacter(player,dt,time);
- updateCharacter(partner,dt,time);
 
- // Camera follows the player from behind.
+  player.position.x=clamp(player.position.x+dx,-9.3,9.3);
+  player.position.z=clamp(player.position.z+dz,-18.5,4.5);
+  player.position.y=sitting?-.25:0;
+
+  if(moving&&!dancing)player.rotation.y=Math.atan2(dx,dz);
+ }
+
+ if(partner&&player){
+  const targetX=player.position.x+1.05;
+  const targetZ=player.position.z-.25;
+
+  if(!dancing&&!sitting){
+   partner.position.x+=(targetX-partner.position.x)*Math.min(1,dt*1.5);
+   partner.position.z+=(targetZ-partner.position.z)*Math.min(1,dt*1.5);
+  }
+  partner.position.y=sitting?-.25:0;
+  partner.rotation.y=Math.atan2(
+   player.position.x-partner.position.x,
+   player.position.z-partner.position.z
+  );
+ }
+
+ updateCharacter(player,dt,time,moving);
+ updateCharacter(partner,dt,time,moving&&!sitting);
+
+ // Follow camera: keep the player and partner within view.
  if(player){
-  const distance=5.4;
+  const distance=5.0;
   const target=new THREE.Vector3(
    player.position.x+Math.sin(yaw)*distance,
-   player.position.y+2.5+pitch*2,
+   player.position.y+2.15+pitch*1.8,
    player.position.z+Math.cos(yaw)*distance
   );
-  camera.position.lerp(target,Math.min(1,dt*3));
-  camera.lookAt(player.position.x,player.position.y+1.05,player.position.z-1);
+  camera.position.lerp(target,Math.min(1,dt*4));
+  camera.lookAt(
+   player.position.x,
+   player.position.y+1.0,
+   player.position.z-.65
+  );
  }
+
  renderer.render(scene,camera);
 }
 
-function startWorld() {
+function startWorld(){
  if(running)return;
  try{
   if(!window.THREE)throw new Error("Three.js did not load. Check your internet connection.");
   if(!renderer)makeMuseum();
+
   home.style.display="none";
   app.style.display="block";
   running=true;
   clock.start();
-  animate();
-  status("Welcome! Both characters are ready ❤️");
 
-  // Optional custom models: upload these files into your repository's models folder.
-  // Keep these filenames exactly as shown.
-  loadCharacter("./models/man.glb",player,"Man",new THREE.Vector3(-.7,0,2));
-  loadCharacter("./models/woman.glb",partner,"Woman",new THREE.Vector3(.7,0,1.9));
+  // Recalculate renderer size after the hidden app becomes visible.
+  renderer.setSize(innerWidth,innerHeight);
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+
+  animate();
+  status("Welcome! Loading your characters ❤️");
+
+  // These paths and filename capitalization must match GitHub exactly.
+  loadCharacter("./models/man.glb",player,"Man",new THREE.Vector3(-.65,0,2));
+  loadCharacter("./models/woman.glb",partner,"Woman",new THREE.Vector3(.65,0,1.65));
  }catch(err){
   console.error("Museum initialization failed:",err);
   home.style.display="flex";
@@ -446,6 +504,7 @@ function startWorld() {
 }
 
 $("enter").addEventListener("click",startWorld);
+
 $("goHome").addEventListener("click",()=>{
  running=false;
  cancelAnimationFrame(frameId);
@@ -474,62 +533,79 @@ window.addEventListener("keydown",e=>{
  if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
 });
 window.addEventListener("keyup",e=>{keys[e.key]=false});
+window.addEventListener("blur",()=>{
+ Object.keys(keys).forEach(k=>keys[k]=false);
+});
 
 canvas.addEventListener("pointerdown",e=>{
- dragging=true;lastX=e.clientX;lastY=e.clientY;
- canvas.setPointerCapture?.(e.pointerId);
+ dragging=true;
+ lastX=e.clientX;
+ lastY=e.clientY;
+ if(canvas.setPointerCapture)canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener("pointermove",e=>{
  if(!dragging)return;
  const dx=e.clientX-lastX,dy=e.clientY-lastY;
- lastX=e.clientX;lastY=e.clientY;
+ lastX=e.clientX;
+ lastY=e.clientY;
  yaw-=dx*.004;
- pitch=THREE.MathUtils.clamp(pitch-dy*.003,-.5,.35);
+ pitch=clamp(pitch-dy*.003,-.45,.3);
 });
-canvas.addEventListener("pointerup",()=>dragging=false);
-canvas.addEventListener("pointercancel",()=>dragging=false);
+function endLook(){dragging=false}
+canvas.addEventListener("pointerup",endLook);
+canvas.addEventListener("pointercancel",endLook);
 
 const joystick=$("joystick"),stick=$("stick");
 let joyActive=false,joyCenter={x:0,y:0};
 function joyStart(e){
+ e.preventDefault();
  joyActive=true;
  const r=joystick.getBoundingClientRect();
  joyCenter={x:r.left+r.width/2,y:r.top+r.height/2};
- joystick.setPointerCapture?.(e.pointerId);
+ if(joystick.setPointerCapture)joystick.setPointerCapture(e.pointerId);
  joyMove(e);
 }
 function joyMove(e){
  if(!joyActive)return;
  const dx=e.clientX-joyCenter.x,dy=e.clientY-joyCenter.y;
- const max=30,len=Math.max(1,Math.hypot(dx,dy)),scale=Math.min(1,max/len);
+ const max=30,len=Math.max(1,Math.hypot(dx,dy));
+ const scale=Math.min(1,max/len);
  const x=dx*scale,y=dy*scale;
  stick.style.transform=`translate(${x}px,${y}px)`;
- moveSide=x/max;moveForward=-y/max;
+ moveSide=x/max;
+ moveForward=-y/max;
 }
 function joyEnd(){
- joyActive=false;moveForward=0;moveSide=0;
+ joyActive=false;
+ moveForward=0;
+ moveSide=0;
  stick.style.transform="translate(0,0)";
 }
 joystick.addEventListener("pointerdown",joyStart);
 joystick.addEventListener("pointermove",joyMove);
 joystick.addEventListener("pointerup",joyEnd);
 joystick.addEventListener("pointercancel",joyEnd);
+joystick.addEventListener("lostpointercapture",joyEnd);
 
 $("addPhotos").addEventListener("click",()=>$("photos").click());
 $("photos").addEventListener("change",e=>{
+ if(!scene){status("Enter the museum before adding photos.");return;}
  const files=Array.from(e.target.files||[]);
  if(!files.length)return;
  let loaded=0;
+ const textureLoader=new THREE.TextureLoader();
+
  files.forEach(file=>{
   const url=URL.createObjectURL(file);
-  const textureLoader=new THREE.TextureLoader();
   textureLoader.load(url,texture=>{
    texture.encoding=THREE.sRGBEncoding;
    const aspect=texture.image.width/texture.image.height;
-   const materialPhoto=new THREE.MeshBasicMaterial({map:texture});
    const width=aspect>1?.78:.55;
    const height=aspect>1?.55:.78;
-   const photo=new THREE.Mesh(new THREE.PlaneGeometry(width,height),materialPhoto);
+   const photo=new THREE.Mesh(
+    new THREE.PlaneGeometry(width,height),
+    new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})
+   );
    photo.position.set(-7+(loaded%6)*2.5,3.0,-19.55);
    scene.add(photo);
    loaded++;
@@ -540,6 +616,7 @@ $("photos").addEventListener("change",e=>{
    URL.revokeObjectURL(url);
   });
  });
+ e.target.value="";
 });
 
 $("music").addEventListener("click",async()=>{
@@ -556,7 +633,7 @@ $("music").addEventListener("click",async()=>{
   await audioContext.resume();
   musicOn=true;
   $("music").textContent="♫ Music: on";
-  // Soft, generated ambient notes; no external audio file required.
+
   if(musicTimer)clearInterval(musicTimer);
   const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
   let n=0;
@@ -567,10 +644,12 @@ $("music").addEventListener("click",async()=>{
    osc.type="sine";
    osc.frequency.value=notes[n++%notes.length];
    gain.gain.setValueAtTime(.0001,audioContext.currentTime);
-   gain.gain.exponentialRampToValueAtTime(.035,audioContext.currentTime+.15);
+   gain.gain.exponentialRampToValueAtTime(.025,audioContext.currentTime+.15);
    gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+1.6);
-   osc.connect(gain);gain.connect(audioContext.destination);
-   osc.start();osc.stop(audioContext.currentTime+1.7);
+   osc.connect(gain);
+   gain.connect(audioContext.destination);
+   osc.start();
+   osc.stop(audioContext.currentTime+1.7);
   },650);
  }catch(err){
   console.error(err);
@@ -584,6 +663,7 @@ window.addEventListener("resize",()=>{
  camera.updateProjectionMatrix();
  renderer.setSize(innerWidth,innerHeight);
 });
+
 })();
 </script>
 </body>
