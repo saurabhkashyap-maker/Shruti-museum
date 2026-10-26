@@ -243,7 +243,12 @@ function loadRiggedCharacter(url,oldCharacter,label) {
     }
     if(!gltfLoader) gltfLoader=new THREE.GLTFLoader();
 
-    gltfLoader.load(url,gltf=>{
+   gltfLoader.load(
+  url,
+  (gltf) => {
+    console.log("✅ GLB loaded:", url);
+    console.log("Animation clips:", gltf.animations.map(a => a.name));
+    console.log("Model:", gltf.scene);
       try {
         const model=gltf.scene||gltf.scenes[0];
         const wrapper=new THREE.Group();
