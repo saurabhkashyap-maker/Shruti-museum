@@ -171,7 +171,27 @@ function loadRiggedCharacter(url,oldCharacter,label){
     let bounds=new THREE.Box3().setFromObject(model);
     let size=bounds.getSize(new THREE.Vector3());
     if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid model height');
-    
+    console.log("MODEL DEBUG:", label, {
+  originalSize: size,
+  modelPosition: model.position,
+  modelScale: model.scale,
+  animationClips: gltf.animations.map(c => c.name),
+  meshes: (() => {
+    const result = [];
+    model.traverse(o => {
+      if (o.isMesh) {
+        result.push({
+          name: o.name,
+          visible: o.visible,
+          position: o.position,
+          vertices: o.geometry?.attributes?.position?.count
+        });
+      }
+    });
+    return result;
+  })()
+});
+
 model.scale.multiplyScalar(1.7 / size.y);
 model.position.set(0, 0, 0);
 model.updateMatrixWorld(true);
