@@ -167,22 +167,23 @@ function loadRiggedCharacter(url,oldCharacter,label){
    try{
     const model=gltf.scene||gltf.scenes?.[0];
     if(!model)throw new Error('GLB has no scene');
-    model.updateMatrixWorld(true);
-    let bounds=new THREE.Box3().setFromObject(model);
-    let size=bounds.getSize(new THREE.Vector3());
-    if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid model height');
-console.log("GLB bounds before scaling:", {
-  sizeX: size.x,
-  sizeY: size.y,
-  sizeZ: size.z,
-  meshCount: (() => {
-    let count = 0;
-    model.traverse(obj => {
-      if (obj.isMesh) count++;
-    });
-    return count;
-  })()
-});
+    
+model.updateMatrixWorld(true);
+
+// These GLB models already include their own 0.01 armature scale.
+// Do not scale them again using the tiny Box3 height.
+model.scale.set(1, 1, 1);
+model.updateMatrixWorld(true);
+
+// Center the character horizontally and place the feet on the floor.
+const fittedBounds = new THREE.Box3().setFromObject(model);
+const center = fittedBounds.getCenter(new THREE.Vector3());
+
+model.position.x -= center.x;
+model.position.z -= center.z;
+model.position.y -= fittedBounds.min.y;
+
+model.updateMatrixWorld(true);
 
 model.scale.multiplyScalar(1.7 / size.y);
 model.position.set(0, 0, 0);
