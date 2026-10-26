@@ -1,57 +1,468 @@
+
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#080707"><title>Our Museum — Walk Through Us</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Our Museum ♥</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap');
-:root{--cream:#eee4d8;--rose:#d8a4ad;--gold:#bca98c}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080707;color:var(--cream);font-family:'DM Sans',sans-serif}button{font:inherit;cursor:pointer;color:inherit}.landing{position:fixed;inset:0;z-index:5;display:grid;place-items:center;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 45%,#382326 0,#171112 36%,#070707 76%);transition:opacity 1s,visibility 1s}.landing.gone{opacity:0;visibility:hidden;pointer-events:none}.eyebrow{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#c8b6aa}.landing h1{font:400 clamp(60px,12vw,110px)/.95 'Playfair Display',serif;letter-spacing:-.05em;margin:25px 0}.landing h1 em{color:var(--rose);font-weight:400}.landing p{color:#b8aaa4;line-height:1.9;font-size:13px;margin:0 auto 30px;max-width:360px}.pill{border:1px solid #bca98c99;background:#e9dfd2;color:#171111;border-radius:99px;padding:15px 24px;font-size:11px;letter-spacing:.15em;text-transform:uppercase}.bottom{position:absolute;bottom:22px;left:0;right:0;color:#766b67;font-size:9px;letter-spacing:.22em;text-transform:uppercase}#world{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}.hud{position:fixed;z-index:2;inset:0;pointer-events:none;display:none}.hud.on{display:block}.brand{position:absolute;top:18px;left:20px;font:italic 22px 'Playfair Display',serif;text-shadow:0 2px 12px #000}.controls{position:absolute;top:15px;right:15px;display:flex;gap:8px;pointer-events:auto}.chip{border:1px solid #d7c4ae66;background:#100e0dbb;backdrop-filter:blur(10px);padding:10px 13px;border-radius:99px;font-size:10px;letter-spacing:.06em}.help{position:absolute;top:67px;left:20px;color:#d4c6baaa;font-size:10px;letter-spacing:.05em;text-shadow:0 2px 8px #000}.crosshair{position:absolute;left:50%;top:50%;width:7px;height:7px;border:1px solid #fff9;border-radius:50%;transform:translate(-50%,-50%);opacity:.65}.prompt{position:absolute;left:50%;bottom:18%;transform:translateX(-50%);background:#0c0a09dd;border:1px solid #bca98c99;padding:12px 18px;font:italic 16px 'Playfair Display',serif;white-space:nowrap;opacity:0;transition:opacity .2s}.prompt.show{opacity:1}.joystick{position:absolute;left:24px;bottom:30px;width:116px;height:116px;border-radius:50%;border:1px solid #eee0ce55;background:#08070666;pointer-events:auto;touch-action:none;display:none}.joyknob{position:absolute;left:50%;top:50%;width:46px;height:46px;border-radius:50%;transform:translate(-50%,-50%);background:#e9dfd22a;border:1px solid #eee0ce88}.lookpad{position:absolute;right:0;bottom:0;width:48%;height:58%;pointer-events:auto;touch-action:none;display:none}.caption{position:absolute;left:50%;bottom:35px;transform:translateX(-50%);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#e4d6c7aa;text-align:center;white-space:nowrap}.modal{position:fixed;z-index:8;inset:0;background:#050404ed;display:none;place-items:center;padding:22px}.modal.show{display:grid}.modalbox{width:min(90vw,520px);border:1px solid #9e8b72;background:#15100f;padding:15px;box-shadow:0 20px 80px #000}.modalbox img{width:100%;max-height:58vh;object-fit:contain;background:#080707}.modalbox h2{font:italic 27px 'Playfair Display',serif;font-weight:400;text-align:center;margin:14px 0 5px}.modalbox p{text-align:center;color:#b7a9a0;font-size:12px}.modal-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.filebtn{display:inline-block;padding:10px 14px;border:1px solid #9e8b72;border-radius:99px;font-size:10px;letter-spacing:.08em}.filebtn input{display:none}.toast{position:fixed;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);background:#100d0df2;border:1px solid #bca98c;padding:22px;max-width:85vw;text-align:center;display:none}.toast.show{display:block}.toast h3{font:italic 24px 'Playfair Display',serif;font-weight:400}.toast button{margin-top:10px}.mobile-only{display:none}@media(max-width:700px){.joystick,.lookpad{display:block}.help{max-width:70%;line-height:1.7}.brand{font-size:19px}.chip{padding:9px 11px}.caption{bottom:17px;font-size:8px}.mobile-only{display:block}.landing h1{font-size:clamp(60px,17vw,86px)}}
-</style></head><body>
-<section class="landing" id="landing"><div><div class="eyebrow">A little place made just for us</div><h1>Our<br><em>Museum.</em></h1><p>Walk with me through our little universe.<br>Every wall holds a memory. Every step is ours.</p><button class="pill" id="enter">Enter our world ↗</button></div><div class="bottom">A private universe for two · made with love ♥</div></section>
-<canvas id="world"></canvas><div class="hud" id="hud"><div class="brand">Our Museum <span style="color:#d8a4ad">♥</span></div><div class="controls"><button class="chip" id="music">♫ Music: off</button><button class="chip" id="uploadBtn">＋ Photos</button><button class="chip" id="exit">← Home</button><input type="file" id="photos" accept="image/*" multiple hidden></div><div class="help">WASD / arrow keys to walk · drag to look<br>Move close to a frame and tap it to open a memory</div><div class="crosshair"></div><div class="prompt" id="prompt">♡ Tap to open this memory</div><div class="joystick" id="joystick"><div class="joyknob" id="joyknob"></div></div><div class="lookpad" id="lookpad"></div><div class="caption">A little walk through everything I love about us</div></div>
-<div class="modal" id="modal"><div class="modalbox"><img id="modalImg" alt="Our memory"><h2 id="modalTitle">The beginning</h2><p>One little moment, kept forever.</p><div class="modal-actions"><label class="filebtn">Replace photo<input id="replacePhoto" type="file" accept="image/*"></label><button class="chip" id="close">Close memory ✕</button></div></div></div><div class="toast" id="loading"><h3>Our little universe</h3><p id="loadText">Opening the museum…</p><button class="chip" id="retry">Continue</button></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>
-(()=>{'use strict';
-const landing=document.getElementById('landing'),hud=document.getElementById('hud'),canvas=document.getElementById('world'),promptEl=document.getElementById('prompt'),modal=document.getElementById('modal');let renderer,scene,camera,clock,started=false,raf=0,activeFrame=null,lookYaw=0,lookPitch=0,move={x:0,y:0},keys={},lastTouch=null,playing=false,audioCtx,master,musicTimer,step=0;const frames=[],photoTextures=[];const captions=['The beginning','My favourite place','Always us','Little adventures','You feel like home','Our forever'];
-function placeholder(i){const c=document.createElement('canvas');c.width=512;c.height=680;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,512,680);[['#403034','#b68c8b'],['#51413b','#c5a58e'],['#302a3a','#9a7c92'],['#2e3a34','#9da78b'],['#3c3030','#b98d83'],['#2d303a','#a6a0b7']][i%6].forEach((v,j)=>g.addColorStop(j,v));x.fillStyle=g;x.fillRect(0,0,512,680);x.fillStyle='#fff2e4';x.globalAlpha=.12;x.beginPath();x.arc(370,145,120,0,Math.PI*2);x.fill();x.globalAlpha=.25;x.beginPath();x.moveTo(0,540);x.quadraticCurveTo(150,350,300,540);x.quadraticCurveTo(420,630,512,490);x.lineTo(512,680);x.lineTo(0,680);x.fill();x.globalAlpha=1;x.fillStyle='#fff0e6';x.textAlign='center';x.font='italic 44px Georgia';x.fillText('Memory '+['I','II','III','IV','V','VI'][i%6],256,340);x.font='16px sans-serif';x.letterSpacing='5px';x.fillText('ADD YOUR PHOTO',256,380);x.font='42px Georgia';x.fillText('♥',256,585);return c}
-function makeTexture(img){const t=new THREE.Texture(img);t.needsUpdate=true;t.colorSpace=THREE.SRGBColorSpace||'srgb';return t}
-function mat(color,rough=.85){return new THREE.MeshStandardMaterial({color,roughness:rough})}
-function addBox(w,h,d,x,y,z,material,parent=scene){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);parent.add(o);return o}
-function buildPerson(clothes,skin,hair,x,z,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);const cloth=mat(clothes),skinmat=mat(skin),hairmat=mat(hair),dark=mat('#171414');function sphere(r,sx,sy,sz,px,py,pz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),m);o.scale.set(sx,sy,sz);o.position.set(px,py,pz);g.add(o);return o}const torso=addBox(.42,.66,.25,0,1.08,0,cloth,g);torso.rotation.z=-.04;sphere(.19,1,1,1,0,1.63,0,skinmat);sphere(.2,1,.55,1,0,1.79,-.02,hairmat);sphere(.055,1,1,.5,-.075,1.64,.17,dark);sphere(.055,1,1,.5,.075,1.64,.17,dark);const arms=[];for(const s of [-1,1]){const a=addBox(.13,.55,.14,s*.29,1.1,0,cloth,g);a.rotation.z=s*-.12;arms.push(a)}const legs=[];for(const s of [-1,1]){const l=addBox(.16,.58,.18,s*.12,.38,0,dark,g);legs.push(l);addBox(.19,.1,.3,s*.12,.08,.045,mat('#211a19'),g)}g.userData={legs,arms,phase:Math.random()*6};scene.add(g);return g}
-let player,partner,artMeshes=[];
-function init(){if(!window.THREE){document.getElementById('loadText').textContent='This browser could not load the 3D engine. Please open while connected to the internet.';document.getElementById('loading').classList.add('show');return false}scene=new THREE.Scene();scene.background=new THREE.Color('#090707');scene.fog=new THREE.FogExp2('#090707',.035);camera=new THREE.PerspectiveCamera(68,innerWidth/innerHeight,.1,100);camera.rotation.order='YXZ';renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputEncoding=THREE.sRGBEncoding;clock=new THREE.Clock();scene.add(new THREE.HemisphereLight('#e6d6d0','#17100e',1.05));const key=new THREE.PointLight('#ffcfad',24,24);key.position.set(0,4,1);scene.add(key);const rose=new THREE.PointLight('#b97c92',12,18);rose.position.set(-5,3,-6);scene.add(rose);const gold=new THREE.PointLight('#e3c5a0',15,18);gold.position.set(5,3,-9);scene.add(gold);
-// museum architecture
-addBox(16,.25,24,0,-.16,-5,mat('#29231f'));addBox(16,.25,24,0,5.2,-5,mat('#151211'));addBox(16,5.3,.25,0,2.5,-17,mat('#27201e'));addBox(.25,5.3,24,-8,2.5,-5,mat('#211b1a'));addBox(.25,5.3,24,8,2.5,-5,mat('#211b1a'));addBox(16,5.3,.25,0,2.5,7,mat('#191413'));
-// floor strips
-for(let x=-7.5;x<=7.5;x+=1.5)addBox(.018,.012,23,x,.002,-5,mat('#504239'));
-// frames on back wall and both sides
-function createFrame(pos,rot,i){const group=new THREE.Group();group.position.set(...pos);group.rotation.y=rot;scene.add(group);addBox(1.48,1.95,.12,0,0,0,mat('#bba17f'),group);addBox(1.35,1.82,.09,0,0,.065,mat('#171311'),group);const tex=makeTexture(placeholder(i));const art=new THREE.Mesh(new THREE.PlaneGeometry(1.22,1.68),new THREE.MeshBasicMaterial({map:tex}));art.position.z=.12;group.add(art);const glow=new THREE.PointLight('#f0caa5',.8,3);glow.position.set(0,1.3,.8);group.add(glow);frames.push({group,art,tex,index:i,title:captions[i%captions.length],pos:new THREE.Vector3(...pos)});artMeshes.push(art)}
-for(let i=0;i<5;i++)createFrame([-5.8+i*2.9,2.5,-16.82],0,i);for(let i=0;i<4;i++)createFrame([-7.82,2.4,-13+i*5],Math.PI/2,i+1);for(let i=0;i<4;i++)createFrame([7.82,2.4,-13+i*5],-Math.PI/2,i+3);
-// pedestals, plants, little floating lights
-for(const [x,z] of [[-3,-8],[3,-11]]){addBox(.7,.65,.7,x,.32,z,mat('#302520'));const orb=new THREE.Mesh(new THREE.SphereGeometry(.18,16,12),new THREE.MeshStandardMaterial({color:'#d6a5a9',emissive:'#5a2636',emissiveIntensity:1.4,roughness:.25}));orb.position.set(x,.78,z);scene.add(orb)}
-player=buildPerson('#cbb5a4','#d8a58d','#352725',0,2,1);partner=buildPerson('#9b6d78','#e3b99d','#33201f',.65,1.8,.98);partner.userData.isPartner=true;camera.position.set(0,1.65,2.8);lookYaw=0;lookPitch=-.03;return true}
-function start(){if(started)return;started=true;landing.classList.add('gone');hud.classList.add('on');if(!renderer&&!init()){started=false;return}cancelAnimationFrame(raf);clock.start();animate()}
-function animate(){raf=requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;if(!scene)return;
-// movement based on camera heading, keyboard + mobile joystick
-const forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-move.y;const sideways=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+move.x;let dx=sideways, dz=forward;const len=Math.hypot(dx,dz);if(len>1){dx/=len;dz/=len}const speed=2.6;player.position.x+= (Math.cos(lookYaw)*dx+Math.sin(lookYaw)*dz)*speed*dt;player.position.z+= (Math.sin(lookYaw)*dx-Math.cos(lookYaw)*dz)*speed*dt;player.position.x=THREE.MathUtils.clamp(player.position.x,-7,7);player.position.z=THREE.MathUtils.clamp(player.position.z,-16,5.8);player.rotation.y=lookYaw+Math.PI;
-// partner walks around the player in a gentle companion orbit
-const targetX=player.position.x+Math.sin(t*.42)*.85+.65,targetZ=player.position.z+Math.cos(t*.42)*.75-.15;partner.position.x+=(targetX-partner.position.x)*Math.min(1,dt*1.8);partner.position.z+=(targetZ-partner.position.z)*Math.min(1,dt*1.8);partner.rotation.y=Math.atan2(player.position.x-partner.position.x,player.position.z-partner.position.z);
-[player,partner].forEach((p,idx)=>{const moving=idx===0?len>.05:Math.abs(targetX-p.position.x)+Math.abs(targetZ-p.position.z)>.025;const phase=p.userData.phase+t*8; p.userData.legs.forEach((l,i)=>{l.rotation.x=moving?Math.sin(phase+i*Math.PI)*.42:Math.sin(t*1.4+i)*.025});p.userData.arms.forEach((a,i)=>{a.rotation.x=moving?Math.sin(phase+i*Math.PI+Math.PI)*.28:Math.sin(t*1.2+i)*.03})});
-// camera follows user; view direction responds to mouse/touch look
-camera.position.set(player.position.x,1.62,player.position.z);camera.rotation.set(lookPitch,lookYaw,0,'YXZ');
-// prompt for nearest painting
-let nearest=null,dist=Infinity;frames.forEach(f=>{const d=player.position.distanceTo(f.pos);if(d<dist){dist=d;nearest=f}});activeFrame=dist<3.3?nearest:null;promptEl.classList.toggle('show',!!activeFrame);if(activeFrame)promptEl.textContent='♡ Tap / click to open · '+activeFrame.title;
-renderer.render(scene,camera)}
-function openFrame(f){if(!f)return;const image=f.art.material.map.image;document.getElementById('modalImg').src=(image&&typeof image.toDataURL==='function')?image.toDataURL():(image&&image.src?image.src:'');document.getElementById('modalTitle').textContent=f.title;modal.classList.add('show');document.getElementById('replacePhoto').dataset.index=f.index}
-// frame picking by tap/click, but don't trigger after looking drag
-let downPos=null;canvas.addEventListener('pointerdown',e=>{downPos={x:e.clientX,y:e.clientY,id:e.pointerId};if(e.pointerType==='mouse')canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',e=>{if(!downPos)return;const moved=Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y);downPos=null;if(moved<12&&activeFrame)openFrame(activeFrame)});
-window.addEventListener('keydown',e=>{keys[e.code]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(e.code==='KeyE'&&activeFrame)openFrame(activeFrame)});window.addEventListener('keyup',e=>keys[e.code]=false);
-canvas.addEventListener('mousemove',e=>{if(!downPos||e.buttons!==1)return;lookYaw-=(e.movementX||0)*.003;lookPitch=THREE.MathUtils.clamp(lookPitch-(e.movementY||0)*.002,-.65,.65)});
-// Mobile joystick
-const joy=document.getElementById('joystick'),knob=document.getElementById('joyknob');let joyId=null;joy.addEventListener('pointerdown',e=>{joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e)});joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});function joyMove(e){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let x=(e.clientX-cx)/45,y=(e.clientY-cy)/45;const l=Math.hypot(x,y);if(l>1){x/=l;y/=l}move={x,y};knob.style.left=`${50+x*38}%`;knob.style.top=`${50+y*38}%`}function joyEnd(){joyId=null;move={x:0,y:0};knob.style.left='50%';knob.style.top='50%'}joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
-const lookpad=document.getElementById('lookpad');lookpad.addEventListener('pointerdown',e=>{lastTouch={x:e.clientX,y:e.clientY,id:e.pointerId};lookpad.setPointerCapture(e.pointerId)});lookpad.addEventListener('pointermove',e=>{if(!lastTouch||lastTouch.id!==e.pointerId)return;const dx=e.clientX-lastTouch.x,dy=e.clientY-lastTouch.y;lookYaw-=dx*.008;lookPitch=THREE.MathUtils.clamp(lookPitch-dy*.006,-.65,.65);lastTouch={x:e.clientX,y:e.clientY,id:e.pointerId}});lookpad.addEventListener('pointerup',()=>lastTouch=null);lookpad.addEventListener('pointercancel',()=>lastTouch=null);
-// Photo uploads: distribute photos across the museum frames
-function applyPhoto(file,index){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const tex=new THREE.Texture(img);tex.needsUpdate=true;tex.encoding=THREE.sRGBEncoding;const f=frames[index%frames.length];f.art.material.map=tex;f.art.material.needsUpdate=true;f.title=file.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ');};img.src=e.target.result};reader.readAsDataURL(file)}
-document.getElementById('uploadBtn').addEventListener('click',()=>document.getElementById('photos').click());document.getElementById('photos').addEventListener('change',e=>{Array.from(e.target.files).forEach((f,i)=>applyPhoto(f,i));e.target.value=''});document.getElementById('replacePhoto').addEventListener('change',e=>{const f=e.target.files[0];if(f)applyPhoto(f,Number(e.target.dataset.index)||0);e.target.value=''});document.getElementById('close').addEventListener('click',()=>modal.classList.remove('show'));modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
-// Ambient original melody synthesized locally; starts only after tap due to browser audio policy
-const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];function tone(freq,when,dur){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(.025,when+.3);g.gain.exponentialRampToValueAtTime(.0001,when+dur);o.connect(g);g.connect(master);o.start(when);o.stop(when+dur+.05)}function musicLoop(){if(!playing)return;const n=audioCtx.currentTime;tone(notes[step%8],n,2.5);if(step%4===0)tone(notes[(step+2)%8]/2,n,3);step++;musicTimer=setTimeout(musicLoop,1150)}document.getElementById('music').addEventListener('click',async()=>{if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();master=audioCtx.createGain();master.gain.value=.7;master.connect(audioCtx.destination)}if(!playing){await audioCtx.resume();playing=true;document.getElementById('music').textContent='♫ Music: on';musicLoop()}else{playing=false;clearTimeout(musicTimer);master.gain.setTargetAtTime(.0001,audioCtx.currentTime,.1);setTimeout(()=>{if(!playing)master.gain.value=.7},400);document.getElementById('music').textContent='♫ Music: off'}});
-document.getElementById('enter').addEventListener('click',start);document.getElementById('retry').addEventListener('click',()=>{document.getElementById('loading').classList.remove('show');start()});document.getElementById('exit').addEventListener('click',()=>{started=false;cancelAnimationFrame(raf);hud.classList.remove('on');landing.classList.remove('gone');modal.classList.remove('show')});window.addEventListener('resize',()=>{if(renderer&&camera){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}});
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#211915;color:#eee0ce;font-family:'DM Sans',sans-serif}
+#world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+header{position:fixed;z-index:3;top:0;left:0;right:0;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(#17110fe8,transparent);pointer-events:none}
+.brand{font:italic 30px 'Playfair Display',serif;white-space:nowrap}
+.brand span{color:#d99aaa}
+.buttons{display:flex;gap:8px;pointer-events:auto}
+button{font:inherit;cursor:pointer}
+.pill{border:1px solid #c7aa8c77;border-radius:40px;padding:11px 15px;color:#f1e5d7;background:#211b18dd;font-size:12px}
+.help{position:fixed;z-index:2;top:78px;left:24px;font-size:11px;line-height:1.7;color:#d5c1ab;text-shadow:0 2px 5px #000;pointer-events:none}
+#caption{position:fixed;bottom:15px;left:0;right:0;text-align:center;letter-spacing:2px;text-transform:uppercase;font-size:9px;color:#d8c0a4;pointer-events:none}
+#prompt{position:fixed;bottom:20%;left:50%;transform:translateX(-50%);padding:11px 16px;background:#1b1412ed;border:1px solid #bda080;border-radius:4px;font:italic 15px 'Playfair Display',serif;display:none;white-space:nowrap}
+#joy{position:fixed;z-index:3;left:22px;bottom:28px;width:112px;height:112px;border:1px solid #f0dfc777;border-radius:50%;background:#19141166;touch-action:none;display:none}
+#knob{position:absolute;left:50%;top:50%;width:40px;height:40px;transform:translate(-50%,-50%);border:1px solid #f0dfc7;background:#d7c5ad55;border-radius:50%}
+#look{position:fixed;z-index:1;right:0;bottom:0;width:48%;height:60%;touch-action:none}
+#modal{position:fixed;z-index:5;inset:0;background:#090706ed;display:none;align-items:center;justify-content:center;padding:20px}
+#modal.show{display:flex}
+.panel{width:min(500px,94vw);padding:16px;background:#211915;border:1px solid #9e8266;text-align:center}
+#memory{display:block;width:100%;height:min(55vh,450px);object-fit:contain}
+#title{font:italic 26px 'Playfair Display',serif;margin:15px 0 6px}
+#note{color:#c5b4a3;font-size:12px;margin-bottom:15px}
+#landing{position:fixed;z-index:6;inset:0;background:radial-gradient(ellipse at center,#493328,#241916 55%,#100d0c);display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;transition:opacity .7s}
+#landing.hide{opacity:0;pointer-events:none}
+#landing h1{font:400 clamp(62px,12vw,105px)/.95 'Playfair Display',serif;margin:22px 0}
+#landing h1 em{color:#d99aaa}
+#landing p{font-size:13px;line-height:1.9;color:#c8b6a5}
+#enter{margin-top:18px;background:#e6d7c5;color:#211713;border:0;border-radius:40px;padding:15px 25px;letter-spacing:1px}
+#toast{position:fixed;z-index:9;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:#241916;border:1px solid #bda080;display:none;max-width:90vw}
+@media(max-width:700px){
+ header{padding:14px 10px;align-items:flex-start}
+ .brand{font-size:20px;position:absolute;top:70px;left:14px}
+ .buttons{width:100%;justify-content:flex-end;gap:4px}
+ .pill{padding:9px 10px;font-size:10px}
+ .help{top:112px;left:14px;font-size:10px}
+ #joy{display:block;width:105px;height:105px;bottom:24px;left:16px}
+ #look{display:block}
+ #caption{bottom:12px;font-size:7px;max-width:65%;left:35%}
+ #prompt{bottom:22%;font-size:12px}
+}
+</style>
+</head>
+<body>
+<canvas id="world"></canvas>
+
+<header>
+  <div class="brand">Our Museum <span>♥</span></div>
+  <div class="buttons">
+    <button class="pill" id="music">♫ Music: off</button>
+    <button class="pill" id="upload">＋ Photos</button>
+    <button class="pill" id="home">← Home</button>
+    <input id="files" type="file" accept="image/*" multiple hidden>
+  </div>
+</header>
+
+<div class="help">WASD / arrow keys to walk · drag to look<br>Move close to a frame and press E / tap it</div>
+<div id="prompt">♡ Open memory</div>
+<div id="joy"><div id="knob"></div></div>
+<div id="look"></div>
+<div id="caption">A little walk through everything I love about us</div>
+
+<div id="landing">
+ <div>
+  <div style="letter-spacing:4px;font-size:10px;color:#c6b19b">A LITTLE PLACE MADE JUST FOR US</div>
+  <h1>Our<br><em>Museum.</em></h1>
+  <p>Walk with me through our little universe.<br>Every wall holds a memory. Every step is ours.</p>
+  <button id="enter">ENTER OUR WORLD ↗</button>
+  <p style="position:absolute;bottom:10px;left:0;right:0;font-size:9px;letter-spacing:2px">A PRIVATE UNIVERSE FOR TWO ♥</p>
+ </div>
+</div>
+
+<div id="modal">
+ <div class="panel">
+  <img id="memory" alt="Our memory">
+  <div id="title">The beginning</div>
+  <div id="note">One little moment, kept forever.</div>
+  <button class="pill" id="replace">Replace photo</button>
+  <input id="replaceFile" type="file" accept="image/*" hidden>
+  <button class="pill" id="close">Close ✕</button>
+ </div>
+</div>
+<div id="toast">3D scene could not load. Check your internet connection and reload.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('world');
+if(!window.THREE){$('toast').style.display='block';return}
+
+let scene,camera,renderer,clock,player,partner;
+let running=false,raf=0,yaw=0,pitch=0;
+let keys={},moveX=0,moveY=0,activeFrame=null;
+let audio=null,musicOn=false,musicTimer=null,musicStep=0;
+let dancing=false,sitting=false,selectedFrame=null;
+const frames=[];
+const names=['The beginning','My favourite place','Always us','Little adventures','You feel like home','Our forever','The little things','Just us'];
+
+const material=(color,roughness=.85,extra={})=>
+ new THREE.MeshStandardMaterial({color,roughness,...extra});
+
+function cube(parent,w,h,d,x,y,z,mat){
+ const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+ o.position.set(x,y,z);
+ o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;
+}
+function ball(parent,r,x,y,z,mat,sx=1,sy=1,sz=1){
+ const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),mat);
+ o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;parent.add(o);return o;
+}
+function cylinder(parent,r1,r2,h,x,y,z,mat){
+ const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,12),mat);
+ o.position.set(x,y,z);o.castShadow=true;parent.add(o);return o;
+}
+
+function makeAvatar(female,x,z){
+ const g=new THREE.Group();g.position.set(x,0,z);
+ const skin=material(female?'#c58f76':'#b47d61');
+ const hair=material(female?'#3a211b':'#29201c');
+ const shirt=material(female?'#d8c9b5':'#8b6044');
+ const pants=material(female?'#344d61':'#594333');
+ const shoes=material(female?'#b6a38e':'#30251e');
+ const pivots={legs:[],arms:[]};
+
+ // Natural human proportions: small head, torso, arms and legs.
+ cube(g,.39,.48,.23,0,1.18,0,shirt);
+ cube(g,.34,.22,.22,0,.82,0,pants);
+ cylinder(g,.07,.075,.14,0,1.49,0,skin);
+ ball(g,.125,0,1.65,0,skin,1,.98,.92);
+ ball(g,.13,0,1.72,-.025,hair,1,.58,1);
+ if(female){
+  ball(g,.105,0,1.52,-.075,hair,.8,1.25,.9);
+  ball(g,.055,-.10,1.54,-.02,hair,.9,1.5,.9);
+  ball(g,.055,.10,1.54,-.02,hair,.9,1.5,.9);
+ }
+ else{
+  ball(g,.10,0,1.75,.005,hair,1,.43,.9);
+ }
+ for(const s of [-1,1]){
+  const arm=new THREE.Group();arm.position.set(s*.245,1.35,0);g.add(arm);
+  cube(arm,.115,.28,.13,0,-.14,0,shirt);
+  cube(arm,.09,.23,.10,s*.012,-.38,.015,skin);
+  pivots.arms.push(arm);
+
+  const leg=new THREE.Group();leg.position.set(s*.105,.78,0);g.add(leg);
+  cube(leg,.145,.40,.16,0,-.20,0,pants);
+  cube(leg,.15,.10,.25,0,-.43,.045,shoes);
+  pivots.legs.push(leg);
+ }
+ g.userData=pivots;scene.add(g);return g;
+}
+
+function artTexture(i){
+ const c=document.createElement('canvas');c.width=400;c.height=520;
+ const ctx=c.getContext('2d');
+ const palettes=[
+  ['#42342f','#b99077'],['#493b35','#d2b69b'],
+  ['#38353e','#ad929c'],['#39443b','#a7ad91'],
+  ['#513832','#c49a8c'],['#343b45','#9ca6ad']
+ ];
+ const p=palettes[i%palettes.length];
+ const gr=ctx.createLinearGradient(0,0,400,520);
+ gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);
+ ctx.fillStyle=gr;ctx.fillRect(0,0,400,520);
+ ctx.fillStyle='#f4e8d6';ctx.globalAlpha=.13;
+ ctx.beginPath();ctx.arc(305,110,76,0,Math.PI*2);ctx.fill();
+ ctx.globalAlpha=.2;ctx.beginPath();ctx.moveTo(0,380);
+ ctx.quadraticCurveTo(120,280,220,395);
+ ctx.quadraticCurveTo(310,470,400,350);
+ ctx.lineTo(400,520);ctx.lineTo(0,520);ctx.fill();ctx.globalAlpha=1;
+ ctx.fillStyle='#f7e9d9';ctx.textAlign='center';
+ ctx.font='italic 34px Georgia';
+ ctx.fillText('Memory '+['I','II','III','IV','V','VI','VII','VIII'][i%8],200,255);
+ ctx.font='11px sans-serif';ctx.fillText('ADD YOUR PHOTO',200,290);
+ ctx.font='30px Georgia';ctx.fillText('♥',200,455);
+ return c;
+}
+function addFrame(x,y,z,rotation,i){
+ const group=new THREE.Group();group.position.set(x,y,z);group.rotation.y=rotation;scene.add(group);
+ cube(group,1.22,1.57,.10,0,0,0,material('#17120f'));
+ cube(group,1.14,1.49,.045,0,0,.065,material('#b59a79'));
+ const img=artTexture(i);
+ const tex=new THREE.CanvasTexture(img);tex.encoding=THREE.sRGBEncoding;
+ const art=new THREE.Mesh(new THREE.PlaneGeometry(1.04,1.38),
+  new THREE.MeshBasicMaterial({map:tex}));
+ art.position.z=.095;group.add(art);
+ frames.push({group,art,tex,img,index:i,title:names[i%names.length],caption:'A memory we wanted to keep close.',x,z});
+ // Soft, focused wall light; no giant bright lamps.
+ const light=new THREE.SpotLight('#ffd09a',1.0,4.8,.62,.7,1.6);
+ light.position.set(0,1.15,.55);light.target.position.set(0,0,0);
+ group.add(light,light.target);
+}
+
+function init(){
+ scene=new THREE.Scene();
+ scene.background=new THREE.Color('#211914');
+ scene.fog=new THREE.Fog('#211914',24,43);
+
+ camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,.1,90);
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.outputEncoding=THREE.sRGBEncoding;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;
+ renderer.toneMappingExposure=.78;
+ renderer.shadowMap.enabled=true;
+ renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+
+ scene.add(new THREE.HemisphereLight('#c6aa8d','#241b16',.65));
+ scene.add(new THREE.AmbientLight('#b18a68',.20));
+ const key=new THREE.DirectionalLight('#e2bd91',.65);
+ key.position.set(-4,8,5);key.castShadow=true;
+ key.shadow.mapSize.set(1024,1024);scene.add(key);
+
+ // Museum shell.
+ cube(scene,18,.25,28,0,-.15,-5,material('#766656'));
+ cube(scene,18,.22,28,0,5.15,-5,material('#30251f'));
+ cube(scene,18,5.25,.28,0,2.5,-19,material('#514035'));
+ cube(scene,.28,5.25,28,-9,2.5,-5,material('#493a31'));
+ cube(scene,.28,5.25,28,9,2.5,-5,material('#493a31'));
+ cube(scene,18,5.25,.28,0,2.5,9,material('#493a31'));
+
+ // Floor seams.
+ const seam=material('#9b8169');
+ for(let x=-8;x<=8;x+=2)cube(scene,.012,.006,27,x,.002,-5,seam);
+ for(let z=-18;z<=8;z+=2)cube(scene,17,.006,.012,0,.003,z,seam);
+
+ // Warm pools of light, controlled to prevent overexposure.
+ for(const [x,z] of [[-5,-15],[0,-15],[5,-15],[-8,-9],[-8,-2],[8,-9],[8,-2]]){
+  const l=new THREE.PointLight('#d6a776',.48,5.5,2);
+  l.position.set(x,3.7,z);scene.add(l);
+ }
+
+ for(let i=0;i<5;i++)addFrame(-6.2+i*3.1,2.65,-18.78,0,i);
+ for(let i=0;i<4;i++)addFrame(-8.78,2.55,-14+i*6,Math.PI/2,i+5);
+ for(let i=0;i<4;i++)addFrame(8.78,2.55,-14+i*6,-Math.PI/2,i+9);
+
+ // Bench in the central gallery.
+ const bench=new THREE.Group();bench.position.set(0,0,-8.4);scene.add(bench);
+ cube(bench,2.2,.12,.55,0,.62,0,material('#a58b6e'));
+ cube(bench,2.05,.09,.48,0,.72,0,material('#c1aa8d'));
+ for(const x of [-.8,.8])cube(bench,.11,.6,.11,x,.3,0,material('#403129'));
+
+ // Small plants, not oversized spheres.
+ for(const x of [-7.3,7.3]){
+  cube(scene,.55,.65,.55,x,.32,-8,material('#30271f'));
+  const plant=material('#43513a');
+  cylinder(scene,.025,.035,1.1,x,1.15,-8,plant);
+  for(let i=0;i<5;i++)ball(scene,.12,x+(i-2)*.08,1.35+(i%2)*.12,-8,plant,1.6,.55,.7);
+ }
+
+ player=makeAvatar(false,-.48,1.2);
+ partner=makeAvatar(true,.48,1.35);
+ camera.position.set(0,2.8,7.8);
+ clock=new THREE.Clock();
+}
+
+function start(){
+ if(running)return;
+ try{if(!scene)init()}catch(e){$('toast').style.display='block';console.error(e);return}
+ running=true;$('landing').classList.add('hide');
+ cancelAnimationFrame(raf);clock.start();animate();
+}
+function animate(){
+ if(!running)return;
+ raf=requestAnimationFrame(animate);
+ const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
+ let forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-moveY;
+ let side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+moveX;
+ const len=Math.hypot(forward,side)||1;
+ if(len>1){forward/=len;side/=len}
+ const walking=Math.abs(forward)+Math.abs(side)>.08&&!sitting;
+ if(!sitting){
+  player.position.x+=(Math.cos(yaw)*side+Math.sin(yaw)*forward)*2.0*dt;
+  player.position.z+=(Math.sin(yaw)*side-Math.cos(yaw)*forward)*2.0*dt;
+ }
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-7.8,7.8);
+ player.position.z=THREE.MathUtils.clamp(player.position.z,-17.8,7.5);
+ player.rotation.y=yaw+Math.PI;
+
+ const targetX=player.position.x+.85;
+ const targetZ=player.position.z+.2;
+ partner.position.x+=(targetX-partner.position.x)*Math.min(1,dt*2.4);
+ partner.position.z+=(targetZ-partner.position.z)*Math.min(1,dt*2.4);
+ partner.rotation.y=player.rotation.y;
+
+ [player,partner].forEach((p,idx)=>{
+  const isMoving=idx===0?walking:Math.abs(targetX-p.position.x)+Math.abs(targetZ-p.position.z)>.05;
+  p.userData.legs.forEach((leg,i)=>{
+   leg.rotation.x=dancing?Math.sin(t*5+i*Math.PI)*.45:isMoving?Math.sin(t*8+i*Math.PI)*.4:0;
+  });
+  p.userData.arms.forEach((arm,i)=>{
+   arm.rotation.x=dancing?Math.sin(t*5+i*Math.PI)*.5:isMoving?Math.sin(t*8+i*Math.PI+Math.PI)*.22:0;
+  });
+  p.position.y=sitting?-.35:Math.abs(isMoving?Math.sin(t*8)*.035:0);
+ });
+
+ if(dancing){
+  player.rotation.y+=Math.sin(t*2)*.25;
+  partner.rotation.y+=Math.cos(t*2)*.25;
+ }
+
+ // Stable, pulled-back third-person camera: keeps heads out of the lens.
+ const distance=5.4;
+ const cx=player.position.x+Math.sin(yaw)*distance;
+ const cz=player.position.z+Math.cos(yaw)*distance;
+ camera.position.x+=(cx-camera.position.x)*Math.min(1,dt*3);
+ camera.position.z+=(cz-camera.position.z)*Math.min(1,dt*3);
+ camera.position.y+=(2.65+pitch-camera.position.y)*Math.min(1,dt*3);
+ camera.lookAt(player.position.x,1.0,player.position.z-1.7);
+
+ let nearest=null,best=999;
+ for(const f of frames){
+  const d=Math.hypot(player.position.x-f.x,player.position.z-f.z);
+  if(d<best){best=d;nearest=f}
+ }
+ activeFrame=best<3.1?nearest:null;
+ $('prompt').style.display=activeFrame?'block':'none';
+ if(activeFrame)$('prompt').textContent='♡ Press E / tap · '+activeFrame.title;
+ renderer.render(scene,camera);
+}
+
+function openMemory(f){
+ if(!f)return;
+ selectedFrame=f;
+ const img=f.art.material.map.image;
+ $('memory').src=img.toDataURL?img.toDataURL():'';
+ $('title').textContent=f.title;
+ $('note').textContent=f.caption;
+ $('modal').classList.add('show');
+}
+function applyPhoto(file,index){
+ if(!file||!file.type.startsWith('image/'))return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  const image=new Image();
+  image.onload=()=>{
+   const f=frames[index%frames.length];
+   const tex=new THREE.Texture(image);tex.needsUpdate=true;tex.encoding=THREE.sRGBEncoding;
+   f.art.material.map=tex;f.art.material.needsUpdate=true;f.tex=tex;
+   f.title=file.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ')||names[index%names.length];
+   f.caption='A memory we wanted to keep close.';
+  };
+  image.src=reader.result;
+ };
+ reader.readAsDataURL(file);
+}
+
+$('enter').addEventListener('click',start);
+$('home').addEventListener('click',()=>{
+ running=false;cancelAnimationFrame(raf);
+ $('landing').classList.remove('hide');$('modal').classList.remove('show');
+});
+$('upload').addEventListener('click',()=>$('files').click());
+$('files').addEventListener('change',e=>{
+ Array.from(e.target.files).forEach((f,i)=>applyPhoto(f,i));
+ e.target.value='';
+});
+$('replace').addEventListener('click',()=>$('replaceFile').click());
+$('replaceFile').addEventListener('change',e=>{
+ if(e.target.files[0]&&selectedFrame)applyPhoto(e.target.files[0],selectedFrame.index);
+ e.target.value='';
+});
+$('close').addEventListener('click',()=>$('modal').classList.remove('show'));
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
+
+window.addEventListener('keydown',e=>{
+ keys[e.code]=true;
+ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
+ if(e.code==='KeyE'&&activeFrame)openMemory(activeFrame);
+ if(e.code==='Escape')$('modal').classList.remove('show');
+});
+window.addEventListener('keyup',e=>keys[e.code]=false);
+
+let pointer=null;
+canvas.addEventListener('pointerdown',e=>{
+ pointer={x:e.clientX,y:e.clientY,id:e.pointerId};
+ if(e.pointerType==='mouse')canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{
+ if(!pointer||pointer.id!==e.pointerId||e.pointerType!=='mouse'||!e.buttons)return;
+ yaw-=(e.clientX-pointer.x)*.004;
+ pitch=THREE.MathUtils.clamp(pitch-(e.clientY-pointer.y)*.003,-.4,.6);
+ pointer={x:e.clientX,y:e.clientY,id:e.pointerId};
+});
+canvas.addEventListener('pointerup',e=>{
+ if(!pointer)return;
+ const dist=Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y);
+ pointer=null;
+ if(dist<10&&activeFrame)openMemory(activeFrame);
+});
+
+const joy=$('joy'),knob=$('knob');let joyId=null;
+function joyMove(e){
+ const r=joy.getBoundingClientRect();
+ let x=(e.clientX-(r.left+r.width/2))/(r.width*.38);
+ let y=(e.clientY-(r.top+r.height/2))/(r.height*.38);
+ const l=Math.hypot(x,y)||1;if(l>1){x/=l;y/=l}
+ moveX=x;moveY=y;
+ knob.style.left=(50+x*34)+'%';knob.style.top=(50+y*34)+'%';
+}
+function joyEnd(){joyId=null;moveX=0;moveY=0;knob.style.left='50%';knob.style.top='50%'}
+joy.addEventListener('pointerdown',e=>{e.preventDefault();joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e)});
+joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});
+joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+
+let lookStart=null;
+$('look').addEventListener('pointerdown',e=>{
+ lookStart={x:e.clientX,y:e.clientY,id:e.pointerId};
+ $('look').setPointerCapture(e.pointerId);
+});
+$('look').addEventListener('pointermove',e=>{
+ if(!lookStart||lookStart.id!==e.pointerId)return;
+ yaw-=(e.clientX-lookStart.x)*.008;
+ pitch=THREE.MathUtils.clamp(pitch-(e.clientY-lookStart.y)*.004,-.4,.6);
+ lookStart={x:e.clientX,y:e.clientY,id:e.pointerId};
+});
+$('look').addEventListener('pointerup',()=>lookStart=null);
+$('look').addEventListener('pointercancel',()=>lookStart=null);
+
+// Soft, original ambient notes generated in-browser after a user tap.
+const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
+function playTone(freq,when,duration){
+ const osc=audio.createOscillator(),gain=audio.createGain();
+ osc.type='sine';osc.frequency.value=freq;
+ gain.gain.setValueAtTime(.0001,when);
+ gain.gain.exponentialRampToValueAtTime(.025,when+.18);
+ gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
+ osc.connect(gain);gain.connect(audio.destination);
+ osc.start(when);osc.stop(when+duration+.05);
+}
+function musicLoop(){
+ if(!musicOn)return;
+ const now=audio.currentTime;
+ playTone(notes[musicStep%notes.length],now,1.7);
+ if(musicStep%4===0)playTone(notes[(musicStep+2)%notes.length]/2,now,2);
+ musicStep++;musicTimer=setTimeout(musicLoop,850);
+}
+$('music').addEventListener('click',async()=>{
+ if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();
+ if(!musicOn){
+  await audio.resume();musicOn=true;$('music').textContent='♫ Music: on';musicLoop();
+ }else{
+  musicOn=false;clearTimeout(musicTimer);$('music').textContent='♫ Music: off';
+ }
+});
+
+$('dance')?.addEventListener('click',()=>{dancing=!dancing});
+$('sit')?.addEventListener('click',()=>{sitting=!sitting});
+
+window.addEventListener('resize',()=>{
+ if(!renderer||!camera)return;
+ camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+});
 })();
-</script></body></html>
+</script>
+</body>
+</html>
